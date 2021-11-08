@@ -1,4 +1,4 @@
-#include "../AudioFile.h"
+#include "AudioFile.h"
 #include <iostream>
 #include <cmath>
 
