@@ -1,23 +1,51 @@
-#include "AudioFile.h"
 #include <iostream>
-#include <cmath>
+#include <fstream>
 
 using namespace std;
 
+int main(int argc, char** argv) {
+    
+    ifstream ifile;
+    ofstream ofile;
 
-int main(int argc, char *argv[]){
-    if(argc == 2){
-        AudioFile<float> audio;
-        bool loaded = audio.load(argv[0]);
+    ifile.open(argv[1]);
+    cout << argv[1] << endl;
 
-        assert(loaded);
+    char * magic = new char [3];
+    ifile >> magic;
 
-        audio.save(argv[1], AudioFileFormat::Wave);
-        return 0;
+    cout << magic << endl;
+
+    char * width = new char [3];
+    ifile >> width;
+
+    cout << width << endl;
+    
+
+    char * height = new char [3];
+    ifile >> height;
+
+    cout << height << endl;
+
+    char * max = new char [3];
+    ifile >> max;
+
+    cout << max << endl;
+
+    ofile.open("out.ppm");
+    ofile << magic << endl;
+    ofile << width << " " << height << endl;
+    ofile << max << endl;
+
+    
+    char * buffer = new char [3];
+    while (ifile.good()) {
+        ifile.read(buffer, 3);
+
+        ofile.write(buffer, 3);
     }
-    cout << "Need two arguments" << endl;
-    return 0;
-}
+        
+    //ifile.read(c, 1);
 
-// compilar com -lsndfile
-// g++ audio.cpp -o audio -lsndfile
+    
+}
