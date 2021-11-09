@@ -2,18 +2,23 @@
 #include<fstream>
 using namespace std;
 
-int main(){
-    ifstream ifs("nums.txt");
-    ofstream ofs("../out.txt");
-
-    char data[100];
-    while(ifs.good()){
-        ifs >> data;
-        if(ifs.good()){
-            ofs << data << endl;
+int main(int argc, char *argv[]){
+    if(argc == 3){
+        ifstream ifs(argv[1]);
+        ofstream ofs(argv[2]);
+        string line;
+        char data[100];
+        while(ifs.good()){
+            ifs >> data;
+            if(ifs.good()){
+                ofs << data << endl;
+            }
         }
+        ifs.close();
+        ofs.close();
+        return 0;
     }
-    ofs.close();
+    cout << "Need two arguments" << endl;
     return 0;
 }
 
