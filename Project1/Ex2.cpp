@@ -1,20 +1,27 @@
 #include<iostream>
 #include<fstream>
+
 using namespace std;
 
-int main(){
-    ifstream ifs("nums.txt");
-    ofstream ofs("../out.txt");
+int main(int argc, char** argv) {
 
-    char data[100];
-    while(ifs.good()){
-        ifs >> data;
-        if(ifs.good()){
-            ofs << data << endl;
-        }
+    cout << "input: " << argv[1] << endl;
+    cout << "output: " << argv[2] << endl;
+
+    ifstream ifile;
+    ofstream ofile;
+
+    ifile.open(argv[1]);
+    ofile.open(argv[2]);
+
+    char c;
+    while (ifile.get(c)) {
+        //c = ifile.get();
+        cout << c << endl;
+
+        ofile << c;
     }
-    ofs.close();
-    return 0;
-}
 
-// ainda nao faz a copia por espaços
+    ofile.close();
+    
+}

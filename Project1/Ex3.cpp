@@ -1,51 +1,42 @@
-#include <iostream>
-#include <fstream>
+#include "AudioFile.h"
 
 using namespace std;
 
-int main(int argc, char** argv) {
+
+int main() {
+
+    AudioFile<double> aud;
+    bool loaded = aud.load("sample01.wav");
+
+
+    //new buffer
+    AudioFile<double>::AudioBuffer buffer;
+
+    //get original nsamples, nchannels
+    int numSamples = aud.getNumSamplesPerChannel();
+    int nch = aud.getNumChannels();
     
-    ifstream ifile;
-    ofstream ofile;
-
-    ifile.open(argv[1]);
-    cout << argv[1] << endl;
-
-    char * magic = new char [3];
-    ifile >> magic;
-
-    cout << magic << endl;
-
-    char * width = new char [3];
-    ifile >> width;
-
-    cout << width << endl;
-    
-
-    char * height = new char [3];
-    ifile >> height;
-
-    cout << height << endl;
-
-    char * max = new char [3];
-    ifile >> max;
-
-    cout << max << endl;
-
-    ofile.open("out.ppm");
-    ofile << magic << endl;
-    ofile << width << " " << height << endl;
-    ofile << max;
-
-    
-    char * buffer = new char [3];
-    while (ifile.good()) {
-        ifile.read(buffer, 3);
-        
-        ofile.write(buffer, 3);
+    //resize new buffer
+    buffer.resize(nch);
+    for (int i=0; i<nch; i++) {
+        buffer[i].resize(numSamples);
     }
-        
-    //ifile.read(c, 1);
 
-    
+    assert(loaded);
+
+    // copy old buffer to new
+    for (int c = 0; c<nch; c++) {
+        for (int i = 0; i<numSamples; i++) {
+            buffer[c][i] = aud.samples[c][i];
+        }
+    }
+
+    AudioFile<double> outf;
+    outf.setAudioBufferSize(nch, numSamples);
+    outf.setBitDepth(24);
+    outf.setSampleRate(44100);
+
+    bool ok = outf.setAudioBuffer(buffer);
+
+    outf.save("out.wav");
 }
