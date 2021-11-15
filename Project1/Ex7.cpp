@@ -20,7 +20,7 @@ int main(int argc, char* argv[]){
         return EXIT_FAILURE;
     }
 
-    // só há 256 valores de cinzento (0-255)
+    // só há 256 valores para cor(0-255)
     int tamHist = 256;
     vector<Mat> rgb_plan;
     split(rgb, rgb_plan);
@@ -50,12 +50,13 @@ int main(int argc, char* argv[]){
     normalize(b_hist, b_hist, 0, histRGB.rows, NORM_MINMAX, -1, Mat());
     normalize(g_hist, g_hist, 0, histRGB.rows, NORM_MINMAX, -1, Mat());
     normalize(r_hist, r_hist, 0, histRGB.rows, NORM_MINMAX, -1, Mat());
+    
     // colocar os valores do histograma na interface
     for(int i = 1; i < tamHist; i++){
         line(histImage, Point(bin_w*(i-1), 400 - cvRound(gray_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(gray_hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
-        line(histRGB, Point(bin_w*(i-1), 400 - cvRound(b_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(gray_hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
-        line(histRGB, Point(bin_w*(i-1), 400 - cvRound(g_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(gray_hist.at<float>(i))), Scalar(0, 255, 0), 2, 8, 0);
-        line(histRGB, Point(bin_w*(i-1), 400 - cvRound(r_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(gray_hist.at<float>(i))), Scalar(0, 0, 255), 2, 8, 0);
+        line(histRGB, Point(bin_w*(i-1), 400 - cvRound(b_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(b_hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
+        line(histRGB, Point(bin_w*(i-1), 400 - cvRound(g_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(g_hist.at<float>(i))), Scalar(0, 255, 0), 2, 8, 0);
+        line(histRGB, Point(bin_w*(i-1), 400 - cvRound(r_hist.at<float>(i-1))), Point(bin_w*(i), histHeight - cvRound(r_hist.at<float>(i))), Scalar(0, 0, 255), 2, 8, 0);
     }
 
     //mostrar o histograma
