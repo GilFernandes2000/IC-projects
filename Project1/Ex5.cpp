@@ -5,12 +5,14 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include <assert.h>
 
 using namespace std;
 
-int main(){
-    ifstream ifs("lusiadas.txt"); // abrir ficheiro para leitura
-    ofstream ofs("histograma.txt"); // criaçao de ficheiro para escrita
+int main(int argc, char* argv[]){
+    assert(argc == 3);
+    ifstream ifs(argv[1]); // abrir ficheiro para leitura
+    ofstream ofs(argv[2]); // criaçao de ficheiro para escrita
 
     map<char,int> hist; // criaçao do histograma
     char c;

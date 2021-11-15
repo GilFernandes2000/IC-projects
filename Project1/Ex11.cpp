@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 using namespace cv;
@@ -24,6 +25,7 @@ double SNR(const Mat &Img1, const Mat &Img2){
 }
 
 int main(int argc, char* argv[]){
+    assert(argc == 3);
     Mat img1 = imread(argv[1]);
     Mat img2 = imread(argv[2]);
     double snr = SNR(img1,img2);

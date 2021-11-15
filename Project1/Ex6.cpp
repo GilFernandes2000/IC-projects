@@ -5,9 +5,10 @@
 
 using namespace std;
 
-int main(){
+int main(int argc, char* argv[]){
+    assert(argc == 2);
     AudioFile<float> audio;
-    bool loaded = audio.load("sample02.wav");
+    bool loaded = audio.load(argv[1]);
     assert(loaded);
 
     int channels = audio.getNumChannels();

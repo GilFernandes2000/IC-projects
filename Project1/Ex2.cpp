@@ -1,8 +1,10 @@
 #include<iostream>
 #include<fstream>
+#include <assert.h>
 using namespace std;
 
 int main(int argc, char *argv[]){
+    assert(argc == 3);
     if(argc == 3){
         ifstream ifs(argv[1]);
         ofstream ofs(argv[2]);
