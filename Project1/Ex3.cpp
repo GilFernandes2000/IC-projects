@@ -1,21 +1,20 @@
 #include "AudioFile.h"
 #include <iostream>
 #include <cmath>
+#include <assert.h>
 
 using namespace std;
 
 
-int main(int argc, char *argv[]){
-    if(argc == 2){
-        AudioFile<float> audio;
-        bool loaded = audio.load(argv[0]);
+int main(int argc, char *argv[]){//dar como argumento o ficheiro para ler e o ficheiro para copia
+    
+    AudioFile<float> audio;
+    bool loaded = audio.load(argv[1]); //carregar audioFile
 
-        assert(loaded);
+    assert(loaded); //verificar se esta carregada
 
-        audio.save(argv[1], AudioFileFormat::Wave);
-        return 0;
-    }
-    cout << "Need two arguments" << endl;
+    audio.save(argv[2], AudioFileFormat::Wave); // guardar o ficheiro em formato .wav
+    
     return 0;
 }
 
