@@ -7,26 +7,18 @@
 using namespace cv;
 using namespace std;
 
-// redução implementada
-inline uchar reduceVal(const uchar val){
-    if(val > 64){
-        return val/2;
-    }
-    if(val < 128){
-        return val/3;
-    }
-    return 255;   
-}
 
 // reduz o numero de bits de cada pixel
 void reduceBits(Mat& img){
-    uchar* pixel = img.data;
-    for(int i = 0; i < img.rows; i++){
-        for (int j = 0; j < img.cols; j++){
-            const int pi = i*img.cols*3 + j*3;
-            pixel[pi + 0] = reduceVal(pixel[pi + 0]);
-            pixel[pi + 1] = reduceVal(pixel[pi + 1]);
-            pixel[pi + 2] = reduceVal(pixel[pi + 2]);
+    int nl = img.rows;                    // number of lines
+    int nc = img.cols * img.channels(); // number of elements per line
+    int div = 128;
+    for (int j = 0; j < nl; j++)
+    {
+        uchar* data = img.ptr<uchar>(j);
+        for (int i = 0; i < nc; i++)
+        {
+            data[i] = data[i] / div * div + div / 2;
         }
     }
 }
