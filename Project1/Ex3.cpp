@@ -35,13 +35,13 @@ int main(int argc, char** argv) {
     ofile.open("out.ppm");
     ofile << magic << endl;
     ofile << width << " " << height << endl;
-    ofile << max << endl;
+    ofile << max;
 
     
     char * buffer = new char [3];
     while (ifile.good()) {
         ifile.read(buffer, 3);
-
+        
         ofile.write(buffer, 3);
     }
         
