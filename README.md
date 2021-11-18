@@ -17,7 +17,8 @@ Iremos colocar aqui todos os nossos projetos de IC
   - [Argumentos necessários para cada ficheiro](#argumentos-necessários-para-cada-ficheiro)
 
 # Project 1
-Primeiro projeto onde manipulamos texto, audio e imagens
+Primeiro projeto onde manipulamos texto, audio e imagens \
+[**Relatorio**](https://github.com/GilFernandes2000/IC-projects/blob/main/Project1/Project1_IC%201.pdf)  
 
 
 ## Ficheiros necessarios
