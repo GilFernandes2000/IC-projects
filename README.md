@@ -76,7 +76,7 @@ cd build\Debug
   ````
 - Ex8:
   ````
-  IC-Projects.exe 
+  IC-Projects.exe <AudioFile> <QuantizationFactor>
   ````
 - Ex9:
   ````
@@ -84,7 +84,7 @@ cd build\Debug
   ````
 - Ex10:
   ````
-  IC-Projects.exe 
+  IC-Projects.exe <Reference AudioFile> <Quantized AudioFile> <QuantizationFactor>
   ````
 - Ex11:
   ````
