@@ -18,7 +18,7 @@ Iremos colocar aqui todos os nossos projetos de IC
 
 # Project 1
 Primeiro projeto onde manipulamos texto, audio e imagens \
-[**Relatorio**](https://github.com/GilFernandes2000/IC-projects/blob/main/Project1/Project1_IC%201.pdf)  
+[**Relatorio**](https://github.com/GilFernandes2000/IC-projects/blob/main/Project1/Project1_IC.pdf)  
 
 
 ## Ficheiros necessarios
