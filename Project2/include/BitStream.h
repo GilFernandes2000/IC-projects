@@ -22,25 +22,31 @@ class BitStream{
             assert(!fileName.empty());
             assert(fileProcess == 'w' || fileProcess == 'r');
 
+            // abre o ficheiro para escrita
             if(fileProcess == 'w'){
                 ifstream ifs(fileName);
             }
+
+            // abre o ficheiro para leitura
             if(fileProcess == 'r'){
                 ofstream ofs(fileName);
             }
         };
 
+        // processa os bits de cada linha
         char* getLineBytes(string line){
             vector<char> bytes(line.begin(), line.end());
             bytes.push_back('\0');
             char* c = &bytes[0];
             return c;
         }
-
+        
+        // funcao para escrever um bit
         void write_bit(char bit){
 
         }
 
+        // funcao para ler um bit
         char read_bit(char* byte, int pos){
             char tmp = *byte;
             return (tmp >> pos) & 0x1;

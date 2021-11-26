@@ -18,13 +18,13 @@ class Golomb{
         int q;
         int r;
     public:
-        Golomb(double m, signed int n){
+        Golomb(double m, signed int n){              // inicializar a class com o valor do M e o numero a codificar
             M = (int)m;
             N = n;
             q = floor(N/M);
             r = N % M;
         };
-        string enconding(){
+        string enconding(){                         // codifica o numero pelo algoritmo de Golomb
             // quocient code
             string golomb;
             for (int i = 0; i < q; i++){
@@ -32,6 +32,7 @@ class Golomb{
             }
             golomb = golomb + '1';
 
+            // rem code
             string binary;
             int b = log2(M);
             binary = bitset<10>(r).to_string();
