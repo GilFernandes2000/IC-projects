@@ -2,8 +2,9 @@
 .vscode/
 .idea/
 
-# cmkae output
-build/
+# cmake output
+build*/
+
 
 # Prerequisites
 *.d
