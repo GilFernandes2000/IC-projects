@@ -6,7 +6,7 @@ using namespace std;
 int main() {
 
     AudioFile<double> aud;
-    bool loaded = aud.load("sample01.wav");
+    bool loaded = aud.load("Wav-files-20211106/sample01.wav");
 
 
     //new buffer
@@ -24,10 +24,11 @@ int main() {
 
     assert(loaded);
 
-    // copy old buffer to new
+
     for (int c = 0; c<nch; c++) {
         for (int i = 0; i<numSamples; i++) {
-            buffer[c][i] = aud.samples[c][i];
+            //buffer[c][i] = aud.samples[c][i] * 5;
+            cout << buffer[c][i] << " " << aud.samples[c][i] << endl;
         }
     }
 
