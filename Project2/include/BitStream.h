@@ -4,10 +4,13 @@
 #include<iostream>
 #include<fstream>
 
+#ifndef PROJECT2_BITSTREAM_H
+#define PROJECT2_BITSTREAM_H
+
 using namespace std;
 
 class BitStream{
-    public:
+    private:
         char mode;
         int currentBit;
         char bitBuffer;
@@ -15,7 +18,8 @@ class BitStream{
 
         ifstream ifile;
         ofstream ofile;
-
+    
+    public:
         BitStream(string fname, char m) {
             
             if (m == 'w') {
@@ -140,5 +144,6 @@ int main(void) {
 
 
     //bin.close();
-
 }
+
+#endif 
