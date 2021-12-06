@@ -24,7 +24,7 @@ class Golomb{
             q = floor(N/M);
             r = N % M;
         };
-        string enconding(){                         // codifica o numero pelo algoritmo de Golomb
+        string encoding(){                         // codifica o numero pelo algoritmo de Golomb
             // quocient code
             string golomb;
             for (int i = 0; i < q; i++){
