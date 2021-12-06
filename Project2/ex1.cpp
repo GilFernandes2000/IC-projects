@@ -88,9 +88,16 @@ class BitStream{
             
         }
 
-        char readBits() {
+        string readBits(int len) {
             if (mode != 'r')
                 throw domain_error("cant write when on read mode"); 
+
+            string s = "";
+            for (int i=0; i < len; i++) {
+                s += readBit();
+            }
+
+            return s;
         }
 
         //tester func
@@ -126,14 +133,7 @@ int main(void) {
 
 
     BitStream bin("out", 'r');
-    cout << bin.readBit();
-    cout << bin.readBit();
-    cout << bin.readBit();
-    cout << bin.readBit();
-    cout << bin.readBit();
-    cout << bin.readBit();
-    cout << bin.readBit();
-    cout << bin.readBit();
+    cout << bin.readBits(8);
 
 
     //bin.close();
