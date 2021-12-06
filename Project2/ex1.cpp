@@ -8,6 +8,7 @@ class BitStream{
         char mode;
         int currentBit;
         char bitBuffer;
+        char byteRead;
 
         ifstream ifile;
         ofstream ofile;
@@ -38,17 +39,24 @@ class BitStream{
 
             currentBit++;
             if (currentBit == 8) {
-                printbincharpad(bitBuffer);
+                //printbincharpad(bitBuffer);
                 currentBit = 0;
                 ofile << bitBuffer;
                 bitBuffer = 0;
-
             }         
         }
 
-        void writeBits(int bit) {
+        void writeBits(string bits) {
             if (mode != 'w')
-                throw domain_error("cant write when on read mode"); 
+                throw domain_error("cant write when on read mode");
+            
+            //string bits_str = to_string(bits);
+
+            for (char& c : bits) {
+                //cout << c - '0';
+                writeBit(c - '0');
+            }
+            
         }   
 
         void close() {
@@ -60,13 +68,29 @@ class BitStream{
         }
         // r        
         char readBit() {
-            if (mode != 'w')
-                throw domain_error("cant read when on write mode"); 
+            if (mode != 'r')
+                throw domain_error("cant write when on read mode");
+            
+            //cout << currentBit;
+            if (currentBit == 8) {
+                currentBit = 0;
+            }
+
+            if (currentBit == 0) {
+                ifile.get(byteRead);
+            }
+
+            char byteAux = (1<<(7-currentBit));
+            char out = (byteRead & byteAux) ? '1' : '0';
+
+            currentBit++;
+            return out;
+            
         }
 
         char readBits() {
-            if (mode != 'w')
-                throw domain_error("cant read when on write mode"); 
+            if (mode != 'r')
+                throw domain_error("cant write when on read mode"); 
         }
 
         //tester func
@@ -80,8 +104,13 @@ class BitStream{
 };
 
 int main(void) {
-    BitStream b("out", 'w');
-
+   /* BitStream b("out", 'w');
+    
+    b.writeBits("00100011");
+    b.writeBits("00100010");
+    b.writeBits("00100100");
+    
+    /*
     b.writeBit(0);
     b.writeBit(0);
     b.writeBit(1);
@@ -90,7 +119,23 @@ int main(void) {
     b.writeBit(0);
     b.writeBit(1);
     b.writeBit(1);
-
+    
     b.close();
+*/
+
+
+
+    BitStream bin("out", 'r');
+    cout << bin.readBit();
+    cout << bin.readBit();
+    cout << bin.readBit();
+    cout << bin.readBit();
+    cout << bin.readBit();
+    cout << bin.readBit();
+    cout << bin.readBit();
+    cout << bin.readBit();
+
+
+    //bin.close();
 
 }
