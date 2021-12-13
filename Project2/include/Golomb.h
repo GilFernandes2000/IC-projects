@@ -13,18 +13,15 @@ using namespace std;
 
 class Golomb{
     private:
-        signed int N;
         int M;
-        int q;
-        int r;
     public:
         Golomb(double m, signed int n){              // inicializar a class com o valor do M e o numero a codificar
             M = (int)m;
-            N = n;
-            q = floor(N/M);
-            r = N % M;
         };
-        string encoding(){                         // codifica o numero pelo algoritmo de Golomb
+        string encoding(signed int N){                         // codifica o numero pelo algoritmo de Golomb
+            int q = floor(N/M);
+            int r = N % M;
+
             // quocient code
             string golomb;
             for (int i = 0; i < q; i++){
