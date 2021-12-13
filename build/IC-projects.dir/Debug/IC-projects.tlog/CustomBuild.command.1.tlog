@@ -1,0 +1,10 @@
+^C:\USERS\JOÃOFERNANDES\DESKTOP\UNI\IC\IC-PROJECTS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/JoãoFernandes/Desktop/UNI/IC/IC-projects -BC:/Users/JoãoFernandes/Desktop/UNI/IC/IC-projects/build --check-stamp-file C:/Users/JoãoFernandes/Desktop/UNI/IC/IC-projects/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

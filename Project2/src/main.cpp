@@ -7,7 +7,7 @@
 
 
 int main(){
-    Golomb go(10, 11);
+    Golomb go(6, 17);
     string encode = go.enconding();
     cout << encode <<endl;
     return EXIT_SUCCESS;
