@@ -20,6 +20,10 @@ class BitStream{
         ofstream ofile;
     
     public:
+        // fname -> file name
+        // m -> mode
+        //      - 'w' for writing
+        //      - 'r' for reading
         BitStream(string fname, char m) {
             
             if (m == 'w') {
@@ -35,7 +39,7 @@ class BitStream{
 
         /* w */
 
-        //
+        // Writes 1 bit to file
         void writeBit(int bit) {
             if (mode != 'w')
                 throw domain_error("cant write when on read mode");    
@@ -53,6 +57,7 @@ class BitStream{
             }         
         }
 
+        // writes bits to file
         void writeBits(string bits) {
             if (mode != 'w')
                 throw domain_error("cant write when on read mode");
@@ -67,13 +72,18 @@ class BitStream{
         }   
 
         void close() {
-            while (currentBit) {
-                writeBit(0);
-            }
-
-            //ofile << "test";
+            if (mode == 'w') {
+                while (currentBit) 
+                    writeBit(0);
+                
+                ofile.close();
+            } else
+                ifile.close();
         }
+        
+        
         // r        
+        // Reads one bit from file
         char readBit() {
             if (mode != 'r')
                 throw domain_error("cant write when on read mode");
@@ -94,7 +104,8 @@ class BitStream{
             return out;
             
         }
-
+        
+        // Reads len bits from file
         string readBits(int len) {
             if (mode != 'r')
                 throw domain_error("cant write when on read mode"); 
@@ -116,34 +127,4 @@ class BitStream{
             putchar('\n');
         }
 };
-
-int main(void) {
-   /* BitStream b("out", 'w');
-    
-    b.writeBits("00100011");
-    b.writeBits("00100010");
-    b.writeBits("00100100");
-    
-    /*
-    b.writeBit(0);
-    b.writeBit(0);
-    b.writeBit(1);
-    b.writeBit(0);
-    b.writeBit(0);
-    b.writeBit(0);
-    b.writeBit(1);
-    b.writeBit(1);
-    
-    b.close();
-*/
-
-
-
-    BitStream bin("out", 'r');
-    cout << bin.readBits(8);
-
-
-    //bin.close();
-}
-
 #endif 
