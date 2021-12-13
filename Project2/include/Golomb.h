@@ -24,7 +24,7 @@ class Golomb{
             q = floor(N/M);
             r = N % M;
         };
-        string enconding(){                         // codifica o numero pelo algoritmo de Golomb
+        string encoding(){                         // codifica o numero pelo algoritmo de Golomb
             // quocient code
             string golomb;
             for (int i = 0; i < q; i++){
@@ -36,16 +36,13 @@ class Golomb{
             string binary;
             int b = log2(M);
             binary = bitset<10>(r).to_string();
-            if(r < pow(2,b+1) - M){
-                for(int i = binary.length(); binary.length()-b < i; i--){
-                    golomb = golomb + binary[i];
-                }
+
+            int n_bits = log2(10) +1; // number of bits needed to represent remainder
+
+            for (int i =binary.length() - n_bits; i <binary.length();i++ ){
+                golomb += binary[i];
             }
-            else if(r >= pow(2,b+1) - M){
-                for(int i = binary.length(); binary.length()-b++ < i; i--){
-                    golomb = golomb + binary[i];
-                }
-            }
+
             return golomb;
         }
 };
