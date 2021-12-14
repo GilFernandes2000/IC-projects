@@ -11,6 +11,7 @@
 using namespace std;
 using namespace cv;
 
+ofstream ofs("golomb.txt");
 
 string imgEncoder(int i, int m){
     Golomb g(m);
@@ -113,14 +114,29 @@ void Lossless (Vec3b Pixel){
     ofstream ofs("golomb.txt");
     int mean = (Pixel[0] + Pixel[1] + Pixel[2])/3;
     int m = (int)((-1)/(log2((mean)/(mean + 1.0))));
+
     ofs << imgEncoder(Pixel[0], m);
     ofs << imgEncoder(Pixel[1], m);         // usa o codificador de Golomb
     ofs << imgEncoder(Pixel[2], m);         // codifica o RGB separado em cada pixel
 }
 
 // lossy encoding
-void Lossy (Vec3b Pixel, int M){
-    
+void Lossy (Vec3b Pixel, Vec3b resto, int shift, int quant){
+    Vec3b residual = Pixel - resto;
+    resto[0] = resto[0] >> shift;
+    resto[1] = resto[1] >> shift;
+    resto[2] = resto[2] >> shift;
+
+    resto[0] = resto[0] << shift;
+    resto[1] = resto[1] << shift;
+    resto[2] = resto[2] << shift;
+
+    int mean = (resto[0] + resto[1] + resto[2])/3;
+    int m = (int)((-1)/(log2((mean)/(mean + 1.0))));
+
+    ofs << imgEncoder(resto[0], m);
+    ofs << imgEncoder(resto[1], m);
+    ofs << imgEncoder(resto[2], m);
 }
 
 Vec3b pixelHand (Mat& img, int c, int r){
@@ -150,39 +166,34 @@ int main(int argc, char* argv[]){
     //imwrite("airplane.jpg", img);
     //size_t pos = s.find('.');
     Mat imgJPG = imread(argv[1]);
-    ofstream ofs("golomb.txt");
     int width = imgJPG.rows;            // dimensoes do ficheiro
     int height = imgJPG.cols;
     
     //string format = s.substr(pos, s.length() - 1);  // formato do ficheiro
 
     //ofs << format << endl;
-    int count = 0;
     cout << width << endl;
     cout << height << endl;
 
+    Vec3b R;
+    Vec3b pixelX;
+    Vec3b pixelA;
+    Vec3b pixelB;
+    Vec3b pixelC;
     for(int r = 0; r < imgJPG.rows; r++){
         for(int c = 0; c < imgJPG.cols; c++){
 
-            Vec3b pixelX = pixelHand(imgJPG, c, r);     // pixeis separados
-            Vec3b pixelA = pixelHand(imgJPG, c-1, r);     // pixeis separados
-            Vec3b pixelB = pixelHand(imgJPG, c, r-1);     // pixeis separados
-            Vec3b pixelC = pixelHand(imgJPG, c-1, r-1);     // pixeis separados
+            pixelX = pixelHand(imgJPG, c, r);     // pixeis separados
+            pixelA = pixelHand(imgJPG, c-1, r);     // pixeis separados
+            pixelB = pixelHand(imgJPG, c, r-1);     // pixeis separados
+            pixelC = pixelHand(imgJPG, c-1, r-1);     // pixeis separados
             
-            //cout << pixelX << endl;
+            // //cout << pixelX << endl;
 
-            Vec3b R = LinearPre(4, pixelX, pixelA, pixelB, pixelC);
-            
-            int mean = (R[0] + R[1] + R[2])/3;
-            int m = (int)((-1)/(log2((mean)/(mean + 1.0))));
-            cout << imgEncoder(R[0], m);
-            cout << imgEncoder(R[1], m);         // usa o codificador de Golomb
-            cout << imgEncoder(R[2], m);         // codifica o RGB separado em cada pixel 
-            count++;    
-            cout << c << endl;
-            cout << r << endl;         
+            R = LinearPre(4, pixelX, pixelA, pixelB, pixelC);
+            Lossless(R);   
         }
     }
-    cout << count;
+    ofs.close();
     return EXIT_SUCCESS;
 }
