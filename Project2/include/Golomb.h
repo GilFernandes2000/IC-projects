@@ -15,11 +15,11 @@ class Golomb{
     private:
         int M;
     public:
-        Golomb(double m, signed int n){              // inicializar a class com o valor do M e o numero a codificar
+        Golomb(double m){              // inicializar a class com o valor do M e o numero a codificar
             M = (int)m;
         };
         string encoding(signed int N){                         // codifica o numero pelo algoritmo de Golomb
-            int q = floor(N/M);
+            int q = (int)(floor(N/M));
             int r = N % M;
 
             // quocient code
@@ -31,12 +31,12 @@ class Golomb{
 
             // rem code
             string binary;
-            int b = log2(M);
+            int b = (int)(log2(M));
             binary = bitset<10>(r).to_string();
 
-            int n_bits = log2(10) +1; // number of bits needed to represent remainder
+            int n_bits = (int)(log2(10) +1); // number of bits needed to represent remainder
 
-            for (int i =binary.length() - n_bits; i <binary.length();i++ ){
+            for (int i = (int)(binary.length() - n_bits); i <binary.length();i++ ){
                 golomb += binary[i];
             }
 
