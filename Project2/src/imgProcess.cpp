@@ -13,52 +13,70 @@ using namespace cv;
 
 ofstream ofs("golomb.txt");
 
+// encoder function
 string imgEncoder(int i, int m){
-    Golomb g(m);
-    string encoded = g.encoding(i);
-    return encoded;
+    Golomb g(m);                        // cria o Golomb e da-lhe o melhor valor de M obtido pela formula
+    string encoded = g.encoding(i);     // codifica os valores dados
+    return encoded;                     // devolve uma string em codigo Golomb (0001101)
 }
 
 // Linear predictor
 Vec3b LinearPre(int mode, Vec3b Px, Vec3b Pa, Vec3b Pb, Vec3b Pc){
+
+//            __|______|______|__
+//              |      |      |
+//              |  Pc  |  Pb  |
+//            __|______|______|__
+//              |      |      |
+//              |  Pa  |  Px  |
+//            __|______|______|__
+//              |      |      |                          
+
     Vec3b result;
 
+    // R = Px - Pa
     if (mode == 1){
         result[0] = Px[0] - Pa[0];
         result[1] = Px[1] - Pa[1];
         result[2] = Px[2] - Pa[2];
     }
 
+    // R = Px - Pb
     if (mode == 2){
         result[0] = Px[0] - Pb[0];
         result[1] = Px[1] - Pb[1];
         result[2] = Px[2] - Pb[2];
     }
-
+    
+    // R = Px - Pc
     if (mode == 3){
         result[0] = Px[0] - Pc[0];
         result[1] = Px[1] - Pc[1];
         result[2] = Px[2] - Pc[2];
     }
 
+    // R = Px - (Pa + Pb - Pc)
     if (mode == 4){
         result[0] = Px[0] - (Pa[0] + Pb[0] - Pc[0]);
         result[1] = Px[1] - (Pa[1] + Pb[1] - Pc[1]);
         result[2] = Px[2] - (Pa[2] + Pb[2] - Pc[2]);
     }
-
+    
+    // R = Px - (Pa + (Pb - Pc)/2)
     if (mode == 5){
         result[0] = Px[0] - (Pa[0] + (Pb[0] - Pc[0])/2);
         result[1] = Px[1] - (Pa[1] + (Pb[1] - Pc[1])/2);
         result[2] = Px[2] - (Pa[2] + (Pb[2] - Pc[2])/2);
     }
 
+    // R = Px - (Pb + (Pa - Pc)/2)
     if (mode == 6){
         result[0] = Px[0] - (Pb[0] + (Pa[0] - Pc[0])/2);
         result[1] = Px[1] - (Pb[1] + (Pa[1] - Pc[1])/2);
         result[2] = Px[2] - (Pb[2] + (Pa[2] - Pc[2])/2);
     }
 
+    // R = Px - ((Pa + Pb)/2)
     if (mode == 7){
         result[0] = Px[0] - ((Pa[0] + Pb[0])/2);
         result[1] = Px[1] - ((Pa[1] + Pb[1])/2);
@@ -121,6 +139,8 @@ void Lossless (Vec3b Pixel){
 }
 
 // lossy encoding
+// Obtenmos o lossy encoder fazendo shift para a direita seguido do mesmo shift para a esquerda
+// Codificamos no final
 void Lossy (Vec3b Pixel, Vec3b resto, int shift, int quant){
     Vec3b residual = Pixel - resto;
     resto[0] = resto[0] >> shift;
@@ -139,6 +159,8 @@ void Lossy (Vec3b Pixel, Vec3b resto, int shift, int quant){
     ofs << imgEncoder(resto[2], m);
 }
 
+// processamento de cada pixel
+// se a coluna ou a linha for de valor negativo o RGB do pixel fica a 0
 Vec3b pixelHand (Mat& img, int c, int r){
     Vec3b pixel;
     if (r < 0){
@@ -165,7 +187,7 @@ int main(int argc, char* argv[]){
     //Mat img = imread("../../Project2/imagens-PPM/airplane.ppm");
     //imwrite("airplane.jpg", img);
     //size_t pos = s.find('.');
-    Mat imgJPG = imread(argv[1]);
+    Mat imgJPG = imread(argv[1]);       // processamento preferêncial em extensão JPG
     int width = imgJPG.rows;            // dimensoes do ficheiro
     int height = imgJPG.cols;
     
@@ -183,15 +205,15 @@ int main(int argc, char* argv[]){
     for(int r = 0; r < imgJPG.rows; r++){
         for(int c = 0; c < imgJPG.cols; c++){
 
-            pixelX = pixelHand(imgJPG, c, r);     // pixeis separados
-            pixelA = pixelHand(imgJPG, c-1, r);     // pixeis separados
-            pixelB = pixelHand(imgJPG, c, r-1);     // pixeis separados
-            pixelC = pixelHand(imgJPG, c-1, r-1);     // pixeis separados
+            pixelX = pixelHand(imgJPG, c, r);           // pixeis separados
+            pixelA = pixelHand(imgJPG, c-1, r);         // pixeis separados
+            pixelB = pixelHand(imgJPG, c, r-1);         // pixeis separados
+            pixelC = pixelHand(imgJPG, c-1, r-1);       // pixeis separados
             
             // //cout << pixelX << endl;
 
-            R = LinearPre(4, pixelX, pixelA, pixelB, pixelC);
-            Lossless(R);   
+            R = LinearPre(4, pixelX, pixelA, pixelB, pixelC);   // retorna o valor do predictor no modo escolhido de 1-7
+            Lossless(R);    // processa o pixel de forma lossless
         }
     }
     ofs.close();

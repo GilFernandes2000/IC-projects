@@ -4,7 +4,7 @@ Iremos colocar aqui todos os nossos projetos de IC
 ## Contribuidores
 - [João Fernandes, 93460](https://github.com/GilFernandes2000)
 - [João Martins, 93183](https://github.com/jfngsea)
-- [Miguel Ferreira,93419](https://github.com/mgLTF)
+- [Miguel Ferreira, 93419](https://github.com/mgLTF)
   
 ## Indice:
 - [IC](#ic)
