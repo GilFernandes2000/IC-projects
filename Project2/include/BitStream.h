@@ -12,18 +12,16 @@ using namespace std;
 class BitStream{
     private:
         char mode;
-        int currentBit;
-        char bitBuffer;
-        char byteRead;
+        int currentBit = 8;
+        int currentBit_write = 0;
+
+        unsigned char bitBuffer=0;
+        char byteRead=0;
 
         ifstream ifile;
         ofstream ofile;
     
     public:
-        // fname -> file name
-        // m -> mode
-        //      - 'w' for writing
-        //      - 'r' for reading
         BitStream(string fname, char m) {
             
             if (m == 'w') {
@@ -37,27 +35,34 @@ class BitStream{
             }
         }
 
+        /**
+         * @brief Destroy the Bit Stream object. Closes Resources first.
+         * 
+         */
+        ~BitStream() {
+            this->close();
+        }
+
         /* w */
 
-        // Writes 1 bit to file
+        //
         void writeBit(int bit) {
             if (mode != 'w')
                 throw domain_error("cant write when on read mode");    
 
             if (bit) {
-                bitBuffer |= (1<<(7-currentBit));
+                bitBuffer |= (0x1<<(7-currentBit_write));
             }
 
-            currentBit++;
-            if (currentBit == 8) {
+            currentBit_write++;
+            if (currentBit_write == 8) {
                 //printbincharpad(bitBuffer);
-                currentBit = 0;
+                currentBit_write = 0;
                 ofile << bitBuffer;
                 bitBuffer = 0;
             }         
         }
 
-        // writes bits to file
         void writeBits(string bits) {
             if (mode != 'w')
                 throw domain_error("cant write when on read mode");
@@ -71,29 +76,33 @@ class BitStream{
             
         }   
 
+        /**
+         * @brief 
+         * Closes underlying file handlers.
+         * If in write mode, writes buffer to file first.
+         */
         void close() {
-            if (mode == 'w') {
-                while (currentBit) 
-                    writeBit(0);
-                
-                ofile.close();
-            } else
-                ifile.close();
+            switch (mode) {
+                case 'r':
+                    ifile.close();
+                    break;
+                case 'w':
+                    ofile << bitBuffer;
+                    ofile.close();
+                    break;
+            }
         }
-        
-        
         // r        
-        // Reads one bit from file
         char readBit() {
             if (mode != 'r')
                 throw domain_error("cant write when on read mode");
-            
+
             //cout << currentBit;
             if (currentBit == 8) {
                 currentBit = 0;
-            }
-
-            if (currentBit == 0) {
+                if (ifile.peek() == EOF) {
+                    return EOF;
+                }
                 ifile.get(byteRead);
             }
 
@@ -104,14 +113,17 @@ class BitStream{
             return out;
             
         }
-        
-        // Reads len bits from file
+
         string readBits(int len) {
             if (mode != 'r')
                 throw domain_error("cant write when on read mode"); 
 
             string s = "";
             for (int i=0; i < len; i++) {
+                char c = readBit();
+                if (c==EOF) {
+                    break;
+                }
                 s += readBit();
             }
 
@@ -127,4 +139,5 @@ class BitStream{
             putchar('\n');
         }
 };
+
 #endif 
