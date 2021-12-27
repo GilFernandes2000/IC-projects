@@ -45,7 +45,7 @@ void reduceBits(Mat& img, int div){
 }
 
 // image encoder
-int ImageEncoder::encode(string img, string fileOut, string encodFormat, string predictor, int mode=1, int quant=1){
+int ImageEncoder::encode(string img, string fileOut, string encodFormat, string predictor, int mode, int quant){
     
     ofstream ofs(fileOut);
 

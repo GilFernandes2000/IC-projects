@@ -11,7 +11,7 @@
 #include "math.h"
 
 #include "BitStream.h"
-#include "../lib/boost/dynamic_bitset.hpp"
+#include "boost/dynamic_bitset.hpp"
 
 /**
  * Classe que implementa um codificador/descodificador golomb com suporte a numeros negativos (usa sinal).

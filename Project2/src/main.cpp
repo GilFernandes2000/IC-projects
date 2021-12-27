@@ -5,10 +5,10 @@
 #include <string>
 
 #include "AudioEncoder.h"
-#include "..\include\BitStream.h"
-#include "..\include\GolombSgd.h"
-#include "..\include\Golomb.h"
 #include "ImageEncoder.h"
+#include "TestBitStream.h"
+#include "TestGolombSgd.h"
+#include "..\include\Golomb.h"
 
 
 int main(int argc, char *argv[]) {
