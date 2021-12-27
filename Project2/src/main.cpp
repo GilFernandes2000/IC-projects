@@ -1,9 +1,14 @@
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 #include <iostream>
 #include <string>
 
 #include "AudioEncoder.h"
-#include "TestBitStream.h"
-#include "TestGolombSgd.h"
+#include "..\include\BitStream.h"
+#include "..\include\GolombSgd.h"
+#include "..\include\Golomb.h"
+#include "ImageEncoder.h"
 
 
 int main(int argc, char *argv[]) {
@@ -51,6 +56,38 @@ int main(int argc, char *argv[]) {
     }
 
     else if (function == "image") {
+        if(argc < 7){
+            printf("ERROR: invalid number of arguments!\n");
+        }
+        std::string command = argv[2];
+
+        if(command == "encode"){
+            std::string img = argv[3];
+            std::string fileOut = argv[4];
+            std::string encodFormat = argv[5];
+            std::string predictor = argv[6];
+            std::int mod = 1;
+            std::int Qt = 1;
+
+            if(argc == 8){
+                if(predictor == "linear"){
+                    mode = argv[7];
+                }
+                if(encodFormat == "lossy"){
+                    quant = argv[7];
+                }
+                if(predictor == "linear" && encodFormat == "lossy"){
+                    printf("ERROR: invalid number of arguments!\n");
+                }
+            }
+            if(argc == 9){
+                std::int mode = argv[7];
+                std::int quant = argv[8];
+            }
+            ImageEncoder::encode(img, fileOut, encodFormat, predictor, mode, quant);
+
+            return 0;
+        }
         return 1; // not imlpemented
     }
 

@@ -34,10 +34,18 @@ class Golomb{
             int b = (int)(log2(M));
             binary = bitset<10>(r).to_string();
 
-            int n_bits = (int)(log2(10) +1); // number of bits needed to represent remainder
-
-            for (int i = (int)(binary.length() - n_bits); i <binary.length();i++ ){
-                golomb += binary[i];
+            if (r < pow(2,b+1)){
+                binary = bitset<10>(r).to_string();
+                for (int i = (int)(binary.length() - b); i <binary.length();i++ ){
+                    golomb += binary[i];
+                }
+            }
+            else{
+                r = r + pow(2, b+1) - M;
+                binary = bitset<10>(r).to_string();
+                for (int i = (int)(binary.length() - b - 1); i <binary.length();i++ ){
+                    golomb += binary[i];
+                }
             }
 
             return golomb;
