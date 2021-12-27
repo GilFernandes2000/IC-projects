@@ -87,7 +87,7 @@ public:
 
         this->stream->writeBits(golomb);
 
-        printf("g: %s;", golomb.c_str());
+        //printf("g: %s;", golomb.c_str());
         return golomb;
     }
 
@@ -96,6 +96,8 @@ public:
      * @return Numero descodificado.
      */
     int readNumber() {
+        if(this->stream->getEof()) { return 0;}
+
         // https://vicente-gonzalez-ruiz.github.io/Golomb-Rice_coding/
         //this->stream->readBit();//read fisrt separator bit
         char schar = this->stream->readBit();
@@ -103,11 +105,12 @@ public:
         int signal = (schar == '1')? 1:-1;
         //if(signal == -1) {this->stream->readBit();}
 
-
+        if(this->stream->getEof()) { return 0;}
         int count = 0;
-        char c =this->stream->readBit();
-        if(c == EOF) {
-            return EOF;
+        char c = this->stream->readBit();
+        if(c == '2') {
+            this->eof= true;
+            return 0;
         }
         while(c == '1'){
             count++;
@@ -116,12 +119,17 @@ public:
 
         //handle remainder
         int r=0;
-        string remainder = "";
-        int b = ceil(log2(this->m));
+        string remainder = "0";
+        int b = floor(log2(this->m)) +1;
         int t = pow(2, b) - this->m;
 
         for(int i=0; i<b;i++){
-            remainder+= this->stream->readBit();
+            char c = this->stream->readBit();
+            if(this->stream->getEof()) {
+                this->eof= true;
+                return 0;
+            }
+            remainder+= c;
         }
 
         r=std::stoi(remainder, nullptr, 2);
@@ -135,9 +143,14 @@ public:
     void closeStream() {
         this->stream->close();
     }
+
+    bool getEof() {
+        return this->stream->getEof();
+    }
 private:
     int m;
     std::unique_ptr<BitStream> stream;
+    bool eof;
 };
 
 #endif //PROJECT2_GOLOMBSGD_H

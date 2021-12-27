@@ -20,6 +20,8 @@ class BitStream{
 
         ifstream ifile;
         ofstream ofile;
+
+        bool eof;
     
     public:
         BitStream(string fname, char m) {
@@ -92,18 +94,26 @@ class BitStream{
                     break;
             }
         }
-        // r        
+
+        bool getEof() {
+            return ifile.eof();
+        }
         char readBit() {
             if (mode != 'r')
                 throw domain_error("cant write when on read mode");
 
             //cout << currentBit;
             if (currentBit == 8) {
-                currentBit = 0;
-                if (ifile.peek() == EOF) {
+                ifile.get(byteRead);
+
+                if(ifile.eof()) {
                     return EOF;
                 }
-                ifile.get(byteRead);
+                currentBit = 0;
+            }
+
+            if(ifile.eof()) {
+                return '2';
             }
 
             char byteAux = (1<<(7-currentBit));
