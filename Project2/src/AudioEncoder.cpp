@@ -43,10 +43,11 @@ int golomb_diviser(int mean) {
  * @param foutPath
  * @return
  */
-int AudioEncoder::encode(std::string finPath, std::string foutPath) {
-    int predictor_order = 1;
-    int samples_per_block = 10;
-    int starter_golomb_m = 4;
+int AudioEncoder::encode(
+        std::string finPath, std::string foutPath,
+        int predictor_order, int samples_per_block, int starter_golomb_m) {
+
+    //ofstream ofile("../encoder_ms");
 
     AudioFile<float> audioFile;
     if(!audioFile.load(finPath)){
@@ -100,6 +101,7 @@ int AudioEncoder::encode(std::string finPath, std::string foutPath) {
             int fSamplesM = golomb_diviser(fSamplesAvg);
             gencoder.encodeNumber(fSamplesM);
             gencoder.updateM(fSamplesM);
+
             for (int s: firstSamples) {
                 gencoder.encodeNumber(s);
             }
@@ -127,6 +129,7 @@ int AudioEncoder::encode(std::string finPath, std::string foutPath) {
                 int residualsM = golomb_diviser(residualsAvg);
                 gencoder.encodeNumber(residualsM);
                 gencoder.updateM(residualsM);
+
                 for (int s: residuals) {
                     gencoder.encodeNumber(s);
                 }
@@ -143,8 +146,9 @@ int AudioEncoder::encode(std::string finPath, std::string foutPath) {
         int sample_idx_offset = predictor_order -1;
         std::vector<int16_t> residuals;
 
-        for(int sampleIdx = offset+block*samples_per_block; sampleIdx<(block+1)*samples_per_block; sampleIdx++){
+        for(int blocksample = 0; blocksample<samples_per_block; blocksample++){
             for(int channelIdx=0; channelIdx<numChannels;channelIdx++){
+                int sampleIdx = block*samples_per_block+blocksample+offset;
                 int16_t  sample_i16 = to_int16(audioFile.samples[channelIdx][sampleIdx]);
                 int residual = sample_i16 - predictors[channelIdx].predict_buffered(sample_i16);
 
@@ -165,6 +169,8 @@ int AudioEncoder::encode(std::string finPath, std::string foutPath) {
         //redefine golomb encodewr with new M
         gencoder.updateM(block_gm);
 
+
+
         //encode block's residuals
         for (auto r:residuals) {
             gencoder.encodeNumber(r);
@@ -173,10 +179,12 @@ int AudioEncoder::encode(std::string finPath, std::string foutPath) {
     return  0;
 }
 
-int AudioEncoder::decode(std::string finPath, std::string foutPath) {
+int AudioEncoder::decode(std::string finPath, std::string foutPath, int starter_golomb_m) {
     //int predictor_order = 1;
     //int samples_per_block = 10;
-    int starter_golomb_m = 4;
+    //int starter_golomb_m = 4;
+
+    std::ofstream ofile("../decode_ms");
 
     AudioFile<float> audioFile;
     AudioFile<float>::AudioBuffer fout_buffer;
@@ -205,6 +213,7 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath) {
         // read first sample of each channel
         {
             int first_data_m =  gencoder->readNumber();
+            ofile << first_data_m << '\n';
             gencoder->updateM(first_data_m);
 
             std::vector<int> firstSamples;
@@ -224,6 +233,7 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath) {
         {
             if(predictor_order>1){
                 int baseSamples_m = gencoder->readNumber();
+                ofile << baseSamples_m << '\n';
                 gencoder->updateM(baseSamples_m);
             }
 
@@ -246,6 +256,8 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath) {
     bool notEOF = true;
     while(notEOF) {
         int block_m = gencoder->readNumber();
+        ofile << block_m << '\n';
+
         gencoder->updateM(block_m);
 
         //read samples_per_block*numChannels residuals
@@ -263,10 +275,6 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath) {
                 fout_buffer[cIdx].push_back(to_float(sample_i));
             }
         }
-    }
-
-    for(int i=0;i<numChannels;i++){
-        printf("%d:%d\n", i, fout_buffer[i].size());
     }
 
     audioFile.setAudioBuffer(fout_buffer);
