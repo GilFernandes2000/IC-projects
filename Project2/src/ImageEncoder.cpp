@@ -31,21 +31,9 @@ void RGB_2_YUV(Vec3b p){
 }
 
 // usado em lossy encoding (compressão com perdas)
-void reduceBits(Mat& img, int div){
-    int nl = img.rows;                    // number of lines
-    int nc = img.cols * img.channels(); // number of elements per line
-    for (int j = 0; j < nl; j++)
-    {
-        uchar* data = img.ptr<uchar>(j);
-        for (int i = 0; i < nc; i++)
-        {
-            data[i] = data[i] / div * div + div / 2;
-        }
-    }
-}
 
 // image encoder
-int ImageEncoder::encode(string img, string fileOut, string encodFormat, string predictor, int mode, int quant){
+int ImageEncoder::encode(string img, string fileOut, string encodFormat, string predictor, int mode, int shifts){
     
     ofstream ofs(fileOut);
 
@@ -63,7 +51,7 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
     int rows = imgPre.getRows();
     int cols = imgPre.getCols();
 
-    Vec3b R;
+    Vec3b prediction;
 
     Vec3b pixelX;
     Vec3b pixelA;
@@ -82,23 +70,40 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
                 RGB_2_YUV(pixelB);
                 RGB_2_YUV(pixelC);
 
-                int M = getM(R);
-
                 if(predictor == 'linear'){
-                    R = imgPre.LinearPre(mode, pixelX, pixelA, pixelB, pixelC);
+                    prediction = imgPre.LinearPre(mode, pixelX, pixelA, pixelB, pixelC);
                 }
 
                 if(predictor == 'nonLinear'){
-                    R = imgPre.NonLinearPre(pixelX, pixelA, pixelB, pixelC);
+                    prediction = imgPre.NonLinearPre(pixelX, pixelA, pixelB, pixelC);
                 }
             if(encodFormat == 'lossless'){
-                ofs << imgEncoder(R[0], m);
-                ofs << imgEncoder(R[1], m);         // usa o codificador de Golomb
-                ofs << imgEncoder(R[2], m); 
+
+                int m = getM(prediction);
+
+                ofs << imgEncoder(prediction[0], m);
+                ofs << imgEncoder(prediction[1], m);         // usa o codificador de Golomb
+                ofs << imgEncoder(prediction[2], m); 
             }
 
             if(encodFormat == 'lossy'){               
-                Vec3b residual = pixelX - R;
+                Vec3b residual = pixelX - prediction;
+
+                residual[0] = residual[0] >> shift;
+                residual[1] = residual[1] >> shift;
+                residual[2] = residual[2] >> shift;
+
+                new_sample = residual + prediction;
+
+                if(predictor == 'linear'){
+                    prediction = imgPre.LinearPre(mode, new_sample, pixelA, pixelB, pixelC);
+                }
+
+                if(predictor == 'nonLinear'){
+                    prediction = imgPre.NonLinearPre(new_sample, pixelA, pixelB, pixelC);
+                }
+
+                int m = getM(prediction);
 
                 ofs << imgEncoder(R[0], m);
                 ofs << imgEncoder(R[1], m);         // usa o codificador de Golomb
@@ -109,21 +114,3 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
     ofs.close();
     return 0;
 }
-
-// void Lossy(Vec3b Pixel, Vec3b resto, int shift, int quant){
-//     Vec3b residual = Pixel - resto;
-//     resto[0] = resto[0] >> shift;
-//     resto[1] = resto[1] >> shift;
-//     resto[2] = resto[2] >> shift;
-
-//     resto[0] = resto[0] << shift;
-//     resto[1] = resto[1] << shift;
-//     resto[2] = resto[2] << shift;
-
-//     int mean = (resto[0] + resto[1] + resto[2])/3;
-//     int m = (int)((-1)/(log2((mean)/(mean + 1))));
-
-//     ofs << imgEncoder(resto[0], m);
-//     ofs << imgEncoder(resto[1], m);
-//     ofs << imgEncoder(resto[2], m);
-// }

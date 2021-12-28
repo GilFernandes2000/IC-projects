@@ -15,7 +15,7 @@ namespace ImageEncoder {
      * @param encodFormat choose between loless and lossy
      * @param predictor choose between linear and nonLinear
      * @param mode to use only if you chose a linear predictor
-     * @param quant quantetization value
+     * @param shifts quantetization value
      * @return 
      */
     int encode(string img, string encodFormat, string predictor, int mode=1);

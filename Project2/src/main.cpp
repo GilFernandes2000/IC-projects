@@ -67,14 +67,14 @@ int main(int argc, char *argv[]) {
             std::string encodFormat = argv[5];
             std::string predictor = argv[6];
             std::int mod = 1;
-            std::int Qt = 1;
+            std::int shift = 0;
 
             if(argc == 8){
                 if(predictor == "linear"){
                     mode = argv[7];
                 }
                 if(encodFormat == "lossy"){
-                    quant = argv[7];
+                    shift = argv[7];
                 }
                 if(predictor == "linear" && encodFormat == "lossy"){
                     printf("ERROR: invalid number of arguments!\n");
@@ -82,9 +82,9 @@ int main(int argc, char *argv[]) {
             }
             if(argc == 9){
                 std::int mode = argv[7];
-                std::int quant = argv[8];
+                std::int s = argv[8];
             }
-            ImageEncoder::encode(img, fileOut, encodFormat, predictor, mode, quant);
+            ImageEncoder::encode(img, fileOut, encodFormat, predictor, mode, shift);
 
             return 0;
         }
