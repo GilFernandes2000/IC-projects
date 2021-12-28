@@ -71,18 +71,18 @@ int main(int argc, char *argv[]) {
 
             if(argc == 8){
                 if(predictor == "linear"){
-                    mode = argv[7];
+                    mode = atoi(argv[7]);
                 }
                 if(encodFormat == "lossy"){
-                    shift = argv[7];
+                    shift = atoi(argv[7]);
                 }
                 if(predictor == "linear" && encodFormat == "lossy"){
                     printf("ERROR: invalid number of arguments!\n");
                 }
             }
             if(argc == 9){
-                std::int mode = argv[7];
-                std::int s = argv[8];
+                std::int mode = atoi(argv[7]);
+                std::int shift = atoi(argv[8]);
             }
             ImageEncoder::encode(img, fileOut, encodFormat, predictor, mode, shift);
 

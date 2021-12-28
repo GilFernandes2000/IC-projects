@@ -86,7 +86,8 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
                 ofs << imgEncoder(prediction[2], m); 
             }
 
-            if(encodFormat == 'lossy'){               
+            if(encodFormat == 'lossy'){   
+                            
                 Vec3b residual = pixelX - prediction;
 
                 residual[0] = residual[0] >> shift;
@@ -105,9 +106,9 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
 
                 int m = getM(prediction);
 
-                ofs << imgEncoder(R[0], m);
-                ofs << imgEncoder(R[1], m);         // usa o codificador de Golomb
-                ofs << imgEncoder(R[2], m);
+                ofs << imgEncoder(prediction[0], m);
+                ofs << imgEncoder(prediction[1], m);         // usa o codificador de Golomb
+                ofs << imgEncoder(prediction[2], m);
             }
         }
     }
