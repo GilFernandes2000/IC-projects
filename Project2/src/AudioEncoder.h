@@ -13,20 +13,24 @@
  * Currently only supports 16bit depth files - TODO
  */
 namespace AudioEncoder {
-    /**
-     * Given a wave files, encodes it using a golomb encoder
-     * @param finPath input file (wav file)
-     * @param foutPath out file (encoded)
-     * @return
-     */
-    int encode(std::string finPath, std::string foutPath);
+     /**
+      *
+      * @param finPath input file (wav file)
+      * @param foutPath out file (encoded)
+      * @param predictor_order
+      * @param samples_per_block
+      * @param starter_golomb_m
+      * @return 0 on success
+      */
+    int encode(std::string finPath, std::string foutPath, int predictor_order=1, int samples_per_block = 10, int starter_golomb_m = 4);
     /**
      * Given a encode wave file (using this namespace method) decodes it back into a wav file
      * @param finPath input file (encoded)
      * @param foutPath out file (wave file)
+     * @param starter_golomb_m
      * @return
      */
-    int decode(std::string finPath, std::string foutPath);
+    int decode(std::string finPath, std::string foutPath, int starter_golomb_m=4);
 };
 
 
