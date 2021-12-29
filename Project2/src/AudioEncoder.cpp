@@ -37,23 +37,30 @@ int golomb_diviser(int mean) {
     return floor((-1.0/(log2((mean)/(mean+1.0)))))+1;
 }
 
+int AudioCodec::encode(std::string finPath, std::string foutPath) {
+    AudioCodec::ENC_OPT  opts;
+    return AudioCodec::encode(finPath, foutPath, opts);
+}
+
 /**
  *
  * @param finPath
  * @param foutPath
  * @return
  */
-int AudioEncoder::encode(
-        std::string finPath, std::string foutPath,
-        int predictor_order, int samples_per_block, int starter_golomb_m) {
+int AudioCodec::encode(
+        std::string finPath, std::string foutPath, ENC_OPT opts) {
 
     //ofstream ofile("../encoder_ms");
+    int division_f = pow(2, opts.quantization_factor);
 
     AudioFile<float> audioFile;
     if(!audioFile.load(finPath)){
         printf("Exiting...\n");
         return 1;
     }
+
+    map<int,int> hist;
 
     //AudioPredictor predictor(predictor_order, audioFile.samples);
 
@@ -63,20 +70,21 @@ int AudioEncoder::encode(
     int numSamples = audioFile.getNumSamplesPerChannel();
     int numChannels = audioFile.getNumChannels();
 
-    int numBlocks = (numSamples-predictor_order)/samples_per_block + 1; //gives wrong number  if numSamples==samples_per_block(tbf special case and not really wanted)
+    int numBlocks = (numSamples-opts.predictor_order)/opts.samples_per_block + 1; //gives wrong number  if numSamples==samples_per_block(tbf special case and not really wanted)
 
     //encode metadata
     //start with default M
-    GolombSgd gencoder(foutPath, 'w', starter_golomb_m);
+    GolombSgd gencoder(foutPath, 'w', opts.starter_golomb_m);
 
     gencoder.encodeNumber(numChannels);
-    gencoder.encodeNumber(samples_per_block);
-    gencoder.encodeNumber(predictor_order);
+    gencoder.encodeNumber(opts.samples_per_block);
+    gencoder.encodeNumber(opts.predictor_order);
+    gencoder.encodeNumber(opts.quantization_factor);
 
     //encode bigger metadata?
 
     //encode n fisrts samples and start general predicrtor buffer
-    std:vector<AudioPredictor> predictors(numChannels, AudioPredictor(predictor_order));
+    std:vector<AudioPredictor> predictors(numChannels, AudioPredictor(opts.predictor_order));
 
     //encode predictors base samples
     {
@@ -90,9 +98,12 @@ int AudioEncoder::encode(
             for (int cIdx = 0; cIdx < numChannels; cIdx++) {
                 float sample_f = audioFile.samples[cIdx][0];
                 int16_t sample_i16 = to_int16(sample_f);
+                if(opts.quantization_factor !=0 ){
+                    sample_i16 /= division_f;
+                }
+
                 predictors[cIdx].updateBuffer(sample_i16);
                 basesamplesPredictors[cIdx].updateBuffer(sample_i16);
-
                 firstSamples.push_back(sample_i16);
                 fSamplesAvg += abs(sample_i16);
             }
@@ -111,12 +122,22 @@ int AudioEncoder::encode(
         {
             std::vector<int> residuals;
             int residualsAvg = 0;
-            for (int sIdx = 1; sIdx < predictor_order; sIdx++) {
+            for (int sIdx = 1; sIdx < opts.predictor_order; sIdx++) {
 
 
                 for (int cIdx = 0; cIdx < numChannels; cIdx++) {
                     int16_t sample_i16 = to_int16(audioFile.samples[cIdx][sIdx]);
-                    int residual = sample_i16 - basesamplesPredictors[cIdx].predict_buffered(sample_i16);
+                    int prediction = basesamplesPredictors[cIdx].predict_buffered(sample_i16);
+                    int residual = sample_i16 - prediction;
+
+                    if(opts.quantization_factor != 0) {
+                        residual /= division_f;
+                        sample_i16 = residual+prediction;
+                    }
+
+                    if(opts.histogram){
+                        hist[residual] += 1;
+                    }
 
                     residuals.push_back(residual);
                     residualsAvg += abs(residual);
@@ -125,7 +146,7 @@ int AudioEncoder::encode(
                 }
             }
             //encode base samples residuals
-            if(predictor_order > 1){
+            if(opts.predictor_order > 1){
                 int residualsM = golomb_diviser(residualsAvg);
                 gencoder.encodeNumber(residualsM);
                 gencoder.updateM(residualsM);
@@ -134,31 +155,41 @@ int AudioEncoder::encode(
                     gencoder.encodeNumber(s);
                 }
             }
-
         }
     }
 
-    int offset = predictor_order;
+    int offset = opts.predictor_order;
 
     for(int block = 0; block<numBlocks; block++){
         //int block_average[numChannels];
         int block_average = 0;
-        int sample_idx_offset = predictor_order -1;
+        int sample_idx_offset = opts.predictor_order -1;
         std::vector<int16_t> residuals;
 
-        for(int blocksample = 0; blocksample<samples_per_block; blocksample++){
+        for(int blocksample = 0; blocksample<opts.samples_per_block; blocksample++){
             for(int channelIdx=0; channelIdx<numChannels;channelIdx++){
-                int sampleIdx = block*samples_per_block+blocksample+offset;
+                int sampleIdx = block*opts.samples_per_block+blocksample+offset;
                 int16_t  sample_i16 = to_int16(audioFile.samples[channelIdx][sampleIdx]);
-                int residual = sample_i16 - predictors[channelIdx].predict_buffered(sample_i16);
+                int prediction = predictors[channelIdx].predict_buffered();
+                int residual = sample_i16 - prediction;
+
+                if(opts.quantization_factor != 0) {
+                    residual /= division_f;
+                    sample_i16 = residual+prediction;
+                }
+
+                if(opts.histogram){
+                    hist[residual] += 1;
+                }
 
                 residuals.push_back(residual);
                 //block_average[channelIdx] += sampleIdx;
                 block_average += abs(residual);
+                predictors[channelIdx].updateBuffer(sample_i16);
             }
         }
 
-        block_average /= (samples_per_block*numChannels);
+        block_average /= (opts.samples_per_block*numChannels);
 
         // calculate block's samples best golomb encoder M
         int block_gm = golomb_diviser(block_average);
@@ -179,7 +210,7 @@ int AudioEncoder::encode(
     return  0;
 }
 
-int AudioEncoder::decode(std::string finPath, std::string foutPath, int starter_golomb_m) {
+int AudioCodec::decode(std::string finPath, std::string foutPath, int starter_golomb_m) {
     //int predictor_order = 1;
     //int samples_per_block = 10;
     //int starter_golomb_m = 4;
@@ -200,6 +231,9 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath, int starter_
     int numChannels = gencoder->readNumber();
     int samples_per_block = gencoder->readNumber();
     int predictor_order = gencoder->readNumber();
+    int quantization_factor = gencoder->readNumber();
+
+    int mult_f = pow(2, quantization_factor);
 
     audioFile.setNumChannels(numChannels);
     fout_buffer.resize(numChannels);
@@ -220,6 +254,11 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath, int starter_
 
             for(int cIdx=0; cIdx<numChannels;cIdx++){
                 int sample_i = gencoder->readNumber();
+
+                if(quantization_factor !=0 ){
+                    sample_i *= mult_f;
+                }
+
                 float sample_f = to_float(sample_i);
                 fout_buffer[cIdx].push_back(sample_f);
 
@@ -240,6 +279,11 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath, int starter_
             for(int i=1; i<predictor_order;i++){
                 for(int cIdx=0; cIdx<numChannels; cIdx++){
                     int residual_i = gencoder->readNumber();
+
+                    if(quantization_factor !=0 ){
+                        residual_i *= mult_f;
+                    }
+
                     int sample_i = residual_i + basesamplesPredictors[cIdx].predict_buffered();
 
                     basesamplesPredictors[cIdx].updateBuffer(sample_i);
@@ -270,6 +314,9 @@ int AudioEncoder::decode(std::string finPath, std::string foutPath, int starter_
                     break;
                 }
                 int prediction = predictors[cIdx].predict_buffered();
+                if(quantization_factor !=0 ){
+                    residual *= mult_f;
+                }
                 int sample_i = residual+prediction;
                 predictors[cIdx].updateBuffer(sample_i);
                 fout_buffer[cIdx].push_back(to_float(sample_i));
