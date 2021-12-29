@@ -11,14 +11,17 @@ Iremos colocar aqui todos os nossos projetos de IC
   - [Contribuidores](#contribuidores)
   - [Indice:](#indice)
 - [Projeto 1](#projeto-1)
-  - [Ficheiros necessarios](#ficheiros-necessarios)
+  - [Bibliotecas Usadas](#bibliotecas-usadas)
+    - [Boost 1.78 (https://www.boost.org/)](#boost-178-httpswwwboostorg)
     - [Biblioteca de Audio](#biblioteca-de-audio)
     - [OpenCV](#opencv)
   - [Argumentos necessários para cada ficheiro](#argumentos-necessários-para-cada-ficheiro)
 - [Projeto 2](#projeto-2)
-  - [Ficheiros necessarios](#ficheiros-necessarios-1)
+  - [Ficheiros necessarios](#ficheiros-necessarios)
     - [Biblioteca de Audio](#biblioteca-de-audio-1)
     - [OpenCV](#opencv-1)
+  - [Argumentos](#argumentos)
+  - [Documentação](#documentação)
 
 # Projeto 1
 Primeiro projeto onde manipulamos texto, audio e imagens \
@@ -111,8 +114,12 @@ Todos os ficheiros levam argumentos para poderem ser executados corretamente
 
 [AudioFile.h](https://github.com/GilFernandes2000/IC-projects/blob/main/Project1/AudioFile.h)
 
+
+
 ### OpenCV
-Criar um ficheiro CMake.txt com este codigo no diretorio do codigo a correr 
+Criar um ficheiro CMake.txt com este codigo no diretorio do codigo a correr
+
+
 ````
 cmake_minimum_required(VERSION 3.0.0)
 project(Project2 VERSION 0.1.0)
@@ -149,3 +156,17 @@ include(CPack)
   ````
   <exe> audio decode <input_file_path> <output_file_path>
   ````
+- Image Encoding:
+  ````
+  <exe> image encode <image_path> <output_file_path> <encoding_format> <predictor> <mode> <quantetization_factor>
+  ````
+Se **enconding_format = "lossy"** deve escolher um valor para a **quantetization_factor**. \
+Se **predictor = "linear"** deve escolher um valor, de **1 a 7** para o **mode**. \
+Ambos o **mode** e **quantetization_factor** têm valores predefinidos (1 e 0 respetivamente).
+
+## Documentação
+Para gerar a documentação:
+````
+cd Project2
+Doxyfile
+````
