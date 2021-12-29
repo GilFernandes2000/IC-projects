@@ -25,8 +25,11 @@ Primeiro projeto onde manipulamos texto, audio e imagens \
 [**Relatorio**](https://github.com/GilFernandes2000/IC-projects/blob/main/Project1/Project1_IC.pdf)  
 
 
-## Ficheiros necessarios
+## Bibliotecas Usadas
 Todos os ficheiros levam argumentos para poderem ser executados corretamente
+### Boost 1.78 (https://www.boost.org/)
+Incluida na pasta lib, nã havendo assim necessidade de qualquer instalação.
+
 ### Biblioteca de Audio
 
 [AudioFile.h](https://github.com/GilFernandes2000/IC-projects/blob/main/Project1/AudioFile.h)
