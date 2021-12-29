@@ -58,6 +58,12 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
     Vec3b pixelB;
     Vec3b pixelC;
 
+    int mR = getM(rows);
+    ofs << imgEncoder(rows, mR);
+
+    int mC = getM(cols);
+    ofs << imgEncoder(cols, mC);
+
     for(int r = 0; r < cols; r++){
         for(int c = 0; c < rows; c++){
                 pixelX = imgPre.pixelHand(c, r);           // pixeis separados
