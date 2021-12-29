@@ -140,3 +140,7 @@ set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 ````
+## Argumentos 
+  - audio: seleciona o subsistema de processamento de som.
+    -- encode <input_file_path> <output_file_path> : codificação do ficheiro
+    -- decode <input_file_path> <output_file_path> : descodificação do ficheiro
