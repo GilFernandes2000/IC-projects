@@ -15,9 +15,22 @@ class Golomb{
     private:
         int M;
     public:
+
+        /**
+         * @brief Constroi um nvov objeto Golomb
+         * 
+         * @param m divisor para encoding/decoding
+         */
         Golomb(double m){              // inicializar a class com o valor do M e o numero a codificar
             M = (int)m;
         };
+
+        /**
+         * @brief c
+         * 
+         * @param N numero ser codificado
+         * @return o numero codificado no formato de string 
+         */
         string encoding(signed int N){                         // codifica o numero pelo algoritmo de Golomb
             int q = (int)(floor(N/M));
             int r = N % M;
