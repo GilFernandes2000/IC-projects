@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
             std::string finpath = argv[3];// "../../wav-files/sample01.wav";
             std::string foutpath = argv[4];// "../sample01.ewav";
 
-            AudioEncoder::encode(finpath, foutpath);
+            AudioCodec::encode(finpath, foutpath);
             return 0;
         }
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
             std::string finpath = argv[3];// "../wav-files/sample01.wav";
             std::string foutpath = argv[4];// "../sample01.cwav";
 
-            AudioEncoder::decode(finpath, foutpath);
+            AudioCodec::decode(finpath, foutpath);
             return 0;
         }
 
@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
             std::string midpath = "../middle.cwav";
             std::string foutpath = argv[4];// "../sample01.wav";
 
-            AudioEncoder::encode(finpath, midpath);
-            AudioEncoder::decode(midpath, foutpath);
+            AudioCodec::encode(finpath, midpath);
+            AudioCodec::decode(midpath, foutpath);
 
             return 0;
         }
