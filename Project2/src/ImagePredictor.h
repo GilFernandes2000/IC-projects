@@ -7,6 +7,7 @@
 #include<string.h>
 
 using namespace std;
+using namespace cv;
 
 /**
  * @brief 
@@ -74,7 +75,7 @@ public:
     int getCols();
 
 private:
-    string img;
+    Mat img;
 };
 
 #endif //PROJECT2_IMAGEPREDICTOR_H

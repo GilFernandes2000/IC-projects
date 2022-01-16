@@ -8,12 +8,13 @@
 #include <string.h>
 #include <math.h>
 //#include "..\include\BitStream.h"
-#include "..\include\Golomb.h"
+#include "Golomb.h"
 using namespace std;
 
 int getM(Vec3b Pixel){
     int mean = (Pixel[0] + Pixel[1] + Pixel[2])/3;
     int m = (int)((-1)/(log2((mean)/(mean + 1.0))));
+    return m;
 }
 
 // usa o algoritmo de Golomb para codificar o umero dado
@@ -38,13 +39,13 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
     ofstream ofs(fileOut);
 
     // garantir que não há valores impossiveis
-    assert(encodFormat == 'lossy' || encodFormat == 'lossless', 'Only lossy or lossless allowed');
-    assert(predictor == 'linear' || predictor == 'nonLinear', 'Only linear or nonLinear allowed');
-    assert(mode >= 1 && mode <= 7, 'Mode only has 1-7');
+    //assert(encodFormat == 'lossy' || encodFormat == 'lossless', 'Only lossy or lossless allowed');
+    //assert(predictor == 'linear' || predictor == 'nonLinear', 'Only linear or nonLinear allowed');
+    //assert(mode >= 1 && mode <= 7, 'Mode only has 1-7');
 
     Mat imgRead = imread(img);
-    if(encodFormat == 'lossy'){
-        reduceBits(imgRead, quant);
+    if(encodFormat == "lossy"){
+        //reduceBits(imgRead, shifts);
     }
 
     ImagePredictor imgPre(imgRead);
@@ -76,14 +77,14 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
                 RGB_2_YUV(pixelB);
                 RGB_2_YUV(pixelC);
 
-                if(predictor == 'linear'){
+                if(predictor == "linear"){
                     prediction = imgPre.LinearPre(mode, pixelX, pixelA, pixelB, pixelC);
                 }
 
-                if(predictor == 'nonLinear'){
+                if(predictor == "nonLinear"){
                     prediction = imgPre.NonLinearPre(pixelX, pixelA, pixelB, pixelC);
                 }
-            if(encodFormat == 'lossless'){
+            if(encodFormat == "lossless"){
 
                 int m = getM(prediction);
 
@@ -92,21 +93,21 @@ int ImageEncoder::encode(string img, string fileOut, string encodFormat, string 
                 ofs << imgEncoder(prediction[2], m); 
             }
 
-            if(encodFormat == 'lossy'){   
+            if(encodFormat == "lossy"){
                             
                 Vec3b residual = pixelX - prediction;
 
-                residual[0] = residual[0] >> shift;
-                residual[1] = residual[1] >> shift;
-                residual[2] = residual[2] >> shift;
+                residual[0] = residual[0] >> shifts;
+                residual[1] = residual[1] >> shifts;
+                residual[2] = residual[2] >> shifts;
 
-                new_sample = residual + prediction;
+                auto new_sample = residual + prediction;
 
-                if(predictor == 'linear'){
+                if(predictor == "linear"){
                     prediction = imgPre.LinearPre(mode, new_sample, pixelA, pixelB, pixelC);
                 }
 
-                if(predictor == 'nonLinear'){
+                if(predictor == "nonLinear"){
                     prediction = imgPre.NonLinearPre(new_sample, pixelA, pixelB, pixelC);
                 }
 

@@ -7,23 +7,23 @@
 #include <string.h>
 #include <math.h>
 //#include "..\include\BitStream.h"
-#include "..\include\Golomb.h"
+#include "Golomb.h"
 
 using namespace std;
 using namespace cv;
 
 
 
-ImagePredictor::ImagePredictor(Mat& img){
+ImagePredictor::ImagePredictor(Mat img){
     this->img = img;
 }
 
 int ImagePredictor::getRows(){
-    return this->imgRead.rows();
+    return this->img.rows;
 }
 
 int ImagePredictor::getCols(){
-    return this->imgRead.cols();
+    return this->img.cols;
 }
 
 // Linear predictor
@@ -150,7 +150,7 @@ Vec3b ImagePredictor::pixelHand(int c, int r){
     }
 
     else{
-        pixel = this->imgRead.at<Vec3b>(r,c);
+        pixel = this->img.at<Vec3b>(r,c);
     }
     return pixel;
 }

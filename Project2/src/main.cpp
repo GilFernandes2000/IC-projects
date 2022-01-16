@@ -8,7 +8,7 @@
 #include "ImageEncoder.h"
 #include "TestBitStream.h"
 #include "TestGolombSgd.h"
-#include "..\include\Golomb.h"
+#include "Golomb.h"
 
 
 int main(int argc, char *argv[]) {
@@ -28,14 +28,19 @@ int main(int argc, char *argv[]) {
             // hard coded cause whne reading path from argv segfaults
             std::string finpath = argv[3];// "../../wav-files/sample01.wav";
             std::string foutpath = argv[4];// "../sample01.ewav";
+            AudioCodec::enc_options OPT;
+            OPT.quantization_factor = 10;
 
-            AudioCodec::encode(finpath, foutpath);
+            AudioCodec::encode(finpath, foutpath, OPT);
             return 0;
         }
 
         else if (command == "decode") {
             std::string finpath = argv[3];// "../wav-files/sample01.wav";
             std::string foutpath = argv[4];// "../sample01.cwav";
+
+            AudioCodec::enc_options OPT;
+            OPT.quantization_factor = 10;
 
             AudioCodec::decode(finpath, foutpath);
             return 0;
@@ -66,8 +71,8 @@ int main(int argc, char *argv[]) {
             std::string fileOut = argv[4];
             std::string encodFormat = argv[5];
             std::string predictor = argv[6];
-            std::int mod = 1;
-            std::int shift = 0;
+            int mode = 1;
+            int shift = 0;
 
             if(argc == 8){
                 if(predictor == "linear"){
@@ -81,8 +86,8 @@ int main(int argc, char *argv[]) {
                 }
             }
             if(argc == 9){
-                std::int mode = atoi(argv[7]);
-                std::int shift = atoi(argv[8]);
+                int mode = atoi(argv[7]);
+                int shift = atoi(argv[8]);
             }
             ImageEncoder::encode(img, fileOut, encodFormat, predictor, mode, shift);
 

@@ -131,7 +131,6 @@ public:
             }
             remainder+= c;
         }
-
         r=std::stoi(remainder, nullptr, 2);
 
         return signal *(count*this->m+r);
