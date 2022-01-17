@@ -38,6 +38,14 @@ public:
         }
     }
 
+    void updateContext(std::string s){
+        context.append(s);
+
+        if(context.size() > this->order) {
+            context = context.substr(context.size()-order,order);
+        }
+    }
+
     /**
      * @return the current context
      */

@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 
-
+#include "fstream"
 
 int const NR_SYMBOLS = 26+1; // 26 letters + space
 
