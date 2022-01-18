@@ -5,6 +5,7 @@
 #ifndef PROJECT3_FCMODELFACTORY_H
 #define PROJECT3_FCMODELFACTORY_H
 
+#include "FCModel_BaseClass.h"
 #include "FCModel.h"
 #include "FCModelContext.h"
 
@@ -16,40 +17,28 @@
 #include <sstream>
 #include <string>
 
-using COUNTERS = std::map<std::string, std::map<std::string , int>>;
+#include "utils/math_utils.h"
 
-class FCModelFactory {
-    COUNTERS counters;
+class FCModelFactory: public FCModel_BaseClass<int>{
     FCModelContext context;
-
-    std::string lang;
-    int order;
-    int smoothing;
+    int total_chars = 0;
 public:
-    /**
-     * Loads a model factory (counters+ metadata) from a file
-     * @param file_path file with model factory
-     * @return
-     */
-    static FCModelFactory load_from_file(std::string file_path);
-
-
-    FCModelFactory(std::string lang, int order=1, int smoothing=1): context(order){
-        this->lang=lang;
-        this->order=order;
-        this->smoothing=smoothing;
-    };
-
-    FCModelFactory(COUNTERS counters, std::string lang, int order=1, int smoothing=1): FCModelFactory(lang, order, smoothing){
-        this->counters=counters;
-    };
 
     /**
-     * Saves counters state to file
-     * @param file_out_path file to save the counter's state to
-     * @return
+     * Constructors
      */
-    int save_to_file(std::string file_out_path);
+
+    FCModelFactory(std::string lang, int order, int smoothing): FCModel_BaseClass<int>(lang, order, smoothing), context(order) {}
+    FCModelFactory(MODEL<int> model, std::string lang, int order, int smoothing): FCModel_BaseClass<int>(model, lang, order, smoothing), context(order) {}
+    FCModelFactory(std::string path): FCModel_BaseClass<int>(), context(this->order) {
+        this->load_from_file(path);
+    }
+
+    /**Virtual method implementation
+    * @param value
+    * @return float representation of value
+    */
+    int parse_value(std::string value);
 
     /**
      * Adds char to model
@@ -82,7 +71,7 @@ public:
     FCModel createModel();
 
     /**
-     * Saves Model (probabilities to binary file
+     * Saves Model (probabilities) to binary file
      * @param file_out_path path to save the file to
      * @return
      */
