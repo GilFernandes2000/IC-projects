@@ -3,7 +3,7 @@
 //
 
 #include "stdio.h"
-#include<string>
+#include <string>
 #include <iostream>
 #include "filesystem"
 #include "FCModelFactory.h"
@@ -26,13 +26,16 @@ int main (int argc, char *argv[]) {
         return 2;
     }
 
+    printf("fcm: train fc models\n");
+    printf("cwd: %s\n", std::filesystem::current_path().c_str());
+    printf("-----------------------\n");
+
     FCModelFactory f(lang, order, smoothing);
 
     while(true){
         char op = 0;
         std::string file_path;
         printf("Options:\n f <file_path>: process file\n s <file_path>: save model to file\n l <file_path>: load model from file\n x: exit\n");
-        printf("CWD: %s\n", std::filesystem::current_path().c_str());
         std::cin >> op;
         std::cin >> file_path;
 
