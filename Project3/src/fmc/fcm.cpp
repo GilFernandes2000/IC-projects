@@ -50,7 +50,7 @@ int main (int argc, char *argv[]) {
                 break;
 
             case 'l':
-                f = FCModelFactory::load_from_file(file_path);
+                f = FCModelFactory(file_path);
                 break;
 
             case 'x':
