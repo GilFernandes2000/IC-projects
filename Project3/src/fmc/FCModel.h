@@ -7,12 +7,27 @@
 
 #include <string>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 #include "fstream"
 
-int const NR_SYMBOLS = 26+1; // 26 letters + space
+#include "utils/math_utils.h"
 
-using MODEL = std::map<std::string, std::map<char, float>>;
+// ------- MODEL CHARACTERISTICS ------- //
+int const NR_SYMBOLS = 26; // 26 letters
+inline char transform_char(char c) {
+    return tolower(c);
+}
+
+inline bool useChar(char c) {
+    return isalpha(c);
+}
+
+template <typename T>
+using MODEL = std::map<std::string, std::map<std::string, T>>;
+
+
 
 /**
  * Class representative of a fcm model
@@ -21,7 +36,7 @@ class FCModel {
     std::string lang;
     int order;
     int smoothing;
-    MODEL model;
+    MODEL<float> model;
 
 public:
     FCModel(std::string lang, int order=1, int smoothing=1) {
@@ -36,8 +51,25 @@ public:
      * @param collumn current item
      * @param probility the probability
      */
-    void setProbability(std::string row, char collumn, float probility){
+    void setValue(std::string row, std::string collumn, float probility){
         this->model[row][collumn] =probility;
+    };
+
+    float getEntropy() {
+        float entropy = 0.0;
+
+        for(auto const& row_ptr : this->model){
+            auto map = row_ptr.second;
+            std::vector<float> probs;
+            std::transform(map.begin(), map.end(), std::back_inserter(probs), [](){});
+            // get submodel / row entropy
+            auto row_entropy = utils::list_entropy(probs);
+            // add it to overall model's entropy using weighted average
+            // the "total" field is supposed to contain the sub-model probability
+            entropy += row_entropy * map["total"];
+        }
+
+        return  entropy;
     };
 };
 
