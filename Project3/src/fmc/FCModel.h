@@ -59,14 +59,14 @@ public:
         float entropy = 0.0;
 
         for(auto const& row_ptr : this->model){
-            auto map = row_ptr.second;
+            auto row_map = row_ptr.second;
             std::vector<float> probs;
-            std::transform(map.begin(), map.end(), std::back_inserter(probs), [](){});
+            std::transform(row_map.begin(), row_map.end(), std::back_inserter(probs), [](const auto& value){ return value.second; });
             // get submodel / row entropy
             auto row_entropy = utils::list_entropy(probs);
             // add it to overall model's entropy using weighted average
             // the "total" field is supposed to contain the sub-model probability
-            entropy += row_entropy * map["total"];
+            entropy += row_entropy * row_map["total"];
         }
 
         return  entropy;
