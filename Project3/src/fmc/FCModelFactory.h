@@ -7,6 +7,7 @@
 
 #include "FCModel.h"
 #include "FCModelContext.h"
+#include "utils/math_utils.h"
 
 #include "vector"
 #include "algorithm"
@@ -16,15 +17,16 @@
 #include <sstream>
 #include <string>
 
-using COUNTERS = std::map<std::string, std::map<std::string , int>>;
-
 class FCModelFactory {
-    COUNTERS counters;
+    MODEL<int> counters;
     FCModelContext context;
 
     std::string lang;
     int order;
     int smoothing;
+
+    int model_total_chars = 0;
+
 public:
     /**
      * Loads a model factory (counters+ metadata) from a file
@@ -40,7 +42,7 @@ public:
         this->smoothing=smoothing;
     };
 
-    FCModelFactory(COUNTERS counters, std::string lang, int order=1, int smoothing=1): FCModelFactory(lang, order, smoothing){
+    FCModelFactory(MODEL<int> counters, std::string lang, int order=1, int smoothing=1): FCModelFactory(lang, order, smoothing){
         this->counters=counters;
     };
 

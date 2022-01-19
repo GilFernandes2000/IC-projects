@@ -1,18 +1,6 @@
 //
 // Created by jfngsea on 16/01/22.
 //
-/**
- * Transforms a char into an appropriate alternative supported by the counters and the model
- * @param c
- * @return return the lowercase of char
- */
-char transform_char(char c);
-/**
- * @param c
- * @return if char can be used in model
- */
-bool useChar(char c);
-
 #include "FCModelFactory.h"
 
 FCModelFactory FCModelFactory::load_from_file(std::string file_path) {
@@ -28,7 +16,7 @@ FCModelFactory FCModelFactory::load_from_file(std::string file_path) {
     getline(ifs, tmp);
     int smoothing = stoi(tmp);
 
-    COUNTERS counters;
+    MODEL<int> counters;
 
     std::string line;
     std::vector<std::string> line_c;
@@ -114,36 +102,51 @@ int FCModelFactory::readFile(std::string file_path) {
 }
 
 int FCModelFactory::updateContext(char c) {
-    this->context.updateContext(c);
-    return 0;
+    std::string s(1, c);
+    return this->updateContext(s);
 }
 int FCModelFactory::updateContext(std::string s) {
     this->context.updateContext(s);
     return 0;
 }
 
-// TODO: use coorect math functions
 FCModel FCModelFactory::createModel() {
     FCModel model(this->lang, this->order, this->smoothing);
+
+    std::vector<int> temp;
+    int table_total = 0;
 
     for (auto const& row_ptr : this->counters){
         auto row_map= row_ptr.second;
 
-        // transform row map into vector containing just the counter's values;
-        std::vector<int> row_values;
-        std::transform(row_map.begin(), row_map.end(), std::back_inserter(row_values), [](auto &kv){ return kv.second;} );
-
-        // total summ
-        int total = std::accumulate(row_values.begin(), row_values.end(), 0);
+        int row_total = row_map["total"];
+        // update table total
+        table_total += row_total;
 
         for (auto const& cell_ptr : row_map){
             std::string c = cell_ptr.first;
+            // column name isn't a character but extra information like the row total
+            // and therefore needs a different approach
+            if (c.size() != 1) {
+                continue;
+            }
+
             int count = cell_ptr.second;
 
-            float prob = count/total;
+            // cell probability
+            float prob = utils::probability(count, row_total, NR_SYMBOLS, this->smoothing);
 
-            model.setProbability(row_ptr.first, c[0], prob);
+            model.setValue(row_ptr.first, c, prob);
         }
+    }
+
+    for (auto const& row_ptr : this->counters){
+        // calculate row probability
+        auto row_map = row_ptr.second;
+        float prob = row_map["total"]/table_total;
+        // set submodel/row probability
+        model.setValue(row_ptr.first, "total", prob);
+
     }
 
     return model;
@@ -154,11 +157,3 @@ int FCModelFactory::saveModel(std::string file_out_path) {
     return 0;
 }
 
-//----- PRIVATE -----//
-char transform_char(char c) {
-    return tolower(c);
-}
-
-bool useChar(char c) {
-    return isalpha(c);
-}
