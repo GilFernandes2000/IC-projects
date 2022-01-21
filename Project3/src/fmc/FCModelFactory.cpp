@@ -61,14 +61,22 @@ int FCModelFactory::updateContext(std::string s) {
 FCModel FCModelFactory::createModel() {
     FCModel model(this->lang, this->order, this->smoothing);
 
+    int model_total_chars = 0;
+
     for (auto const& row_ptr : this->model){
         auto row_map= row_ptr.second;
 
         // get total
         auto total = row_map["total"];
+        model_total_chars += total;
 
         for (auto const& cell_ptr : row_map){
             std::string c = cell_ptr.first;
+            // column name isn't a character but extra information like the row total
+            // and therefore needs a different approach
+            if (c.size() != 1) {
+                continue;
+            }
             int count = cell_ptr.second;
 
             float prob = utils::probability(count, total, NR_SYMBOLS, smoothing);
@@ -76,8 +84,17 @@ FCModel FCModelFactory::createModel() {
             model.set_field(row_ptr.first, c, prob);
         }
 
-        //set submodel probability
-        model.set_field(row_ptr.first,"total", total/this->total_chars);
+        // set submodel probability
+        // model.set_field(row_ptr.first,"total", total/this->total_chars);
+    }
+
+    for (auto const& row_ptr : this->model){
+        // calculate row probability
+        auto row_map = row_ptr.second;
+        float prob = (row_map["total"] + 0.0)/(model_total_chars);
+        // set submodel/row probability
+        model.set_field(row_ptr.first, "total", prob);
+
     }
 
     return model;
