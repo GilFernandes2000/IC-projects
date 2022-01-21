@@ -49,6 +49,7 @@ public:
         return return_value;
     }
 
+
     /**
      * Adds char to model
      * @param c

@@ -66,7 +66,7 @@ int main (int argc, char *argv[]) {
                 {
                     auto m = f.createModel();
                     m.save_to_file(file_path);
-                    printf("\nEntropy: %f\n\n", m.get_entropy());
+                    printf("\nEntropy: %f\n\n", m.getEntropy());
                 }
                 break;
             case 'e':
@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
             {
                 auto m = f.createModel();
                 m.save_to_file(file_path);
-                printf("\nEntropy: %f\n\n", m.get_entropy());
+                printf("\nEntropy: %f\n\n", m.getEntropy());
             }
                 break;
         }
