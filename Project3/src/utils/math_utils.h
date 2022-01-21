@@ -26,7 +26,7 @@ namespace utils {
      * @return the probability of the event
      */
     inline float probability(int n, int total, int alphab_size, int smoothing = 0) {
-        return ((n + smoothing) / (total + smoothing * alphab_size));
+        return ((0.0 + n + smoothing) / ( 0.0+total + smoothing * alphab_size));
     }
 
     /**
@@ -45,8 +45,8 @@ namespace utils {
      */
     inline float list_entropy(std::vector<float> probs) {
         return 0.0 - std::accumulate(probs.begin(), probs.end(), 0.0, [](const float &accumalator, const float &current) {
-                                   return accumalator + cell_entropy(current);
-                               }
+                                         return accumalator + cell_entropy(current);
+                                     }
         );
     }
 }

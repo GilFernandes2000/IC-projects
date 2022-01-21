@@ -35,11 +35,19 @@ int main (int argc, char *argv[]) {
     while(true){
         char op = 0;
         std::string file_path;
-        printf("Options:\n f <file_path>: process file\n s <file_path>: save model to file\n l <file_path>: load model from file\n x: exit\n");
+        printf("Options:\n"
+               " f <file_path>: process file\n"
+               " s <file_path>: save model to file\n"
+               " l <file_path>: load model from file\n"
+               " m <file_path>: creates and outputs the probabilites model\n"
+               " e <file_path>: load probabilities model and get entropy\n"
+               " x: exit\n");
         std::cin >> op;
         std::cin >> file_path;
 
         switch (op) {
+            case 'x':
+                return 0;
 
             case 'f':
                 f.readFile(file_path);
@@ -50,11 +58,25 @@ int main (int argc, char *argv[]) {
                 break;
 
             case 'l':
-                f = FCModelFactory::load_from_file(file_path);
+                f.load_from_file(file_path);
                 break;
 
-            case 'x':
-                return 0;
+            case 'm':
+                // keeps scoping or throws error due to var init
+                {
+                    auto m = f.createModel();
+                    m.save_to_file(file_path);
+                    printf("\nEntropy: %f\n\n", m.get_entropy());
+                }
+                break;
+            case 'e':
+                // keeps scoping or throws error due to var init
+            {
+                auto m = f.createModel();
+                m.save_to_file(file_path);
+                printf("\nEntropy: %f\n\n", m.get_entropy());
+            }
+                break;
         }
     }
 

@@ -13,13 +13,10 @@ include_directories(${CMAKE_SOURCE_DIR}/test)
 include_directories(${CMAKE_SOURCE_DIR}/lib)
 include_directories(${CMAKE_SOURCE_DIR}/../lib)
 
-
 #OpenCV
 #find_package( OpenCV REQUIRED )
 #include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-# fcm executable
-set(FCMODEL_FILES src/fmc/FCModel.h src/fmc/FCModelFactory.cpp src/fmc/FCModelFactory.h src/fmc/FCModelContext.h )
-set(UTILS src/utils/math_utils.h)
-
-add_executable(fcm src/fmc/fcm.cpp ${FCMODEL_FILES} ${UTILS} )
+# fcm.exe
+set(FCMODEL_FILES src/fmc/FCModel_BaseClass.h src/fmc/FCModelContext.h  src/fmc/FCModel.h src/fmc/FCModelFactory.h src/fmc/FCModelFactory.cpp )
+add_executable(fcm src/fmc/fcm.cpp ${FCMODEL_FILES} src/utils/math_utils.h)

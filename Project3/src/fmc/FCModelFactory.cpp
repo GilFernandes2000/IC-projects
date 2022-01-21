@@ -3,6 +3,10 @@
 //
 #include "FCModelFactory.h"
 
+
+int FCModelFactory::parse_value(std::string value) {
+    return std::stoi(value);
+
 FCModelFactory FCModelFactory::load_from_file(std::string file_path) {
     std::ifstream ifs(file_path);
     std::string tmp;
@@ -74,8 +78,9 @@ int FCModelFactory::addChar(std::string c) {
     std::string context = this->context.getContext();
 
     // update counters
-    this->counters[context][c] += 1;
-    this->counters[context]["total"] += 1;
+    this->model[context][c] += 1;
+    this->model[context]["total"] += 1;
+    this->total_chars++;
 
     //update context
     return this->updateContext(c);
@@ -112,16 +117,14 @@ int FCModelFactory::updateContext(std::string s) {
 
 FCModel FCModelFactory::createModel() {
     FCModel model(this->lang, this->order, this->smoothing);
+    int model_total_chars = 0;
 
-    std::vector<int> temp;
-    int table_total = 0;
-
-    for (auto const& row_ptr : this->counters){
+    for (auto const& row_ptr : this->model){
         auto row_map= row_ptr.second;
 
-        int row_total = row_map["total"];
-        // update table total
-        table_total += row_total;
+        // get total
+        auto total = row_map["total"];
+        model_total_chars += total;
 
         for (auto const& cell_ptr : row_map){
             std::string c = cell_ptr.first;
@@ -130,30 +133,31 @@ FCModel FCModelFactory::createModel() {
             if (c.size() != 1) {
                 continue;
             }
-
             int count = cell_ptr.second;
 
-            // cell probability
-            float prob = utils::probability(count, row_total, NR_SYMBOLS, this->smoothing);
+            float prob = utils::probability(count, total, NR_SYMBOLS, smoothing);
 
-            model.setValue(row_ptr.first, c, prob);
+            model.set_field(row_ptr.first, c, prob);
         }
+
+        // set submodel probability
+        // model.set_field(row_ptr.first,"total", total/this->total_chars);
     }
 
-    for (auto const& row_ptr : this->counters){
+    for (auto const& row_ptr : this->model){
         // calculate row probability
         auto row_map = row_ptr.second;
-        float prob = row_map["total"]/table_total;
+        float prob = (row_map["total"] + 0.0)/(model_total_chars);
         // set submodel/row probability
-        model.setValue(row_ptr.first, "total", prob);
+        model.set_field(row_ptr.first, "total", prob);
 
     }
+
 
     return model;
 }
 
 int FCModelFactory::saveModel(std::string file_out_path) {
-
-    return 0;
+    FCModel m = this->createModel();
+    return m.save_to_file(file_out_path);
 }
-

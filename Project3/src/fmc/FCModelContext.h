@@ -12,16 +12,17 @@
  * It uses a string as a container instead of a more general circular_buffer given the specificity of its application
  */
 class FCModelContext {
-    int order;
+
     std::string context="";
 
 public:
+    int order;
 
     /**
      * Default contructor
      * @param order the number of character to store for context
      */
-    FCModelContext(int order) {
+    FCModelContext(int order=1) {
         this->order=order;
     }
 

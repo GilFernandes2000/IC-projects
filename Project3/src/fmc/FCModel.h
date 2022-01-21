@@ -5,54 +5,24 @@
 #ifndef PROJECT3_FCMODEL_H
 #define PROJECT3_FCMODEL_H
 
-#include <string>
-#include <map>
-#include <vector>
 #include <algorithm>
-
-#include "fstream"
-
+#include "FCModel_BaseClass.h"
 #include "utils/math_utils.h"
 
-// ------- MODEL CHARACTERISTICS ------- //
-int const NR_SYMBOLS = 26; // 26 letters
-inline char transform_char(char c) {
-    return tolower(c);
-}
-
-inline bool useChar(char c) {
-    return isalpha(c);
-}
-
-template <typename T>
-using MODEL = std::map<std::string, std::map<std::string, T>>;
-
-
-
-/**
- * Class representative of a fcm model
- */
-class FCModel {
-    std::string lang;
-    int order;
-    int smoothing;
-    MODEL<float> model;
+class FCModel :public FCModel_BaseClass<float>{
 
 public:
-    FCModel(std::string lang, int order=1, int smoothing=1) {
-        this->lang=lang;
-        this->order=order;
-        this->smoothing=smoothing;
-    };
+    /**
+     * Inherited constructors
+     */
+    using FCModel_BaseClass::FCModel_BaseClass;
 
     /**
-     * Set the probility of of the model for a given (context/row, current/collum)
-     * @param row the context
-     * @param collumn current item
-     * @param probility the probability
+     * @param value
+     * @return float representation of value
      */
-    void setValue(std::string row, std::string collumn, float probility){
-        this->model[row][collumn] =probility;
+    float parse_value(std::string value) override {
+        return std::stof(value);
     };
 
     float getEntropy() {
