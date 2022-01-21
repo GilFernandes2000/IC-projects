@@ -3,8 +3,65 @@
 //
 #include "FCModelFactory.h"
 
+
 int FCModelFactory::parse_value(std::string value) {
     return std::stoi(value);
+
+FCModelFactory FCModelFactory::load_from_file(std::string file_path) {
+    std::ifstream ifs(file_path);
+    std::string tmp;
+    //load metadata
+
+    std::string lang;
+    getline(ifs, lang);
+
+    getline(ifs, tmp);
+    int order = stoi(tmp);
+    getline(ifs, tmp);
+    int smoothing = stoi(tmp);
+
+    MODEL<int> counters;
+
+    std::string line;
+    std::vector<std::string> line_c;
+    while(getline(ifs, line)){
+        std::stringstream ss(line);
+        while(getline(ss, tmp, ':')){
+            line_c.push_back(tmp);
+            if(line_c.size()==3) {
+                break;
+            }
+        }
+
+        std::string ctx = line_c[0];
+        std::string letter = line_c[1];
+        int count = stoi(line_c[2]);
+
+        counters[ctx][letter] = count;
+
+        line_c.clear();
+    }
+
+    return FCModelFactory(counters, lang, order, smoothing);
+}
+
+
+int FCModelFactory::save_to_file(std::string file_out_path) {
+    std::ofstream ofs(file_out_path);
+
+    //save metadata
+    ofs << this->lang << '\n';
+    ofs << this->order << '\n';
+    ofs << this->smoothing << '\n';
+
+
+    for (auto const& row_ptr : this->counters){
+        for (auto const& cell_ptr : row_ptr.second){
+            ofs << row_ptr.first << ':' << cell_ptr.first << ':' << cell_ptr.second << '\n';
+        }
+    }
+
+    return 0;
 }
 
 int FCModelFactory::addChar(char c) {
@@ -50,8 +107,8 @@ int FCModelFactory::readFile(std::string file_path) {
 }
 
 int FCModelFactory::updateContext(char c) {
-    this->context.updateContext(c);
-    return 0;
+    std::string s(1, c);
+    return this->updateContext(s);
 }
 int FCModelFactory::updateContext(std::string s) {
     this->context.updateContext(s);
@@ -60,7 +117,6 @@ int FCModelFactory::updateContext(std::string s) {
 
 FCModel FCModelFactory::createModel() {
     FCModel model(this->lang, this->order, this->smoothing);
-
     int model_total_chars = 0;
 
     for (auto const& row_ptr : this->model){
@@ -96,6 +152,7 @@ FCModel FCModelFactory::createModel() {
         model.set_field(row_ptr.first, "total", prob);
 
     }
+
 
     return model;
 }

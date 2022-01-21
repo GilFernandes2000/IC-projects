@@ -25,7 +25,7 @@ public:
         return std::stof(value);
     };
 
-    float get_entropy() {
+    float getEntropy() {
         float entropy = 0.0;
 
         for(auto const& row_ptr : this->model){

@@ -8,6 +8,7 @@
 #include "FCModel_BaseClass.h"
 #include "FCModel.h"
 #include "FCModelContext.h"
+#include "utils/math_utils.h"
 
 #include "vector"
 #include "algorithm"
@@ -22,6 +23,7 @@
 class FCModelFactory: public FCModel_BaseClass<int>{
     FCModelContext context;
     int total_chars = 0;
+
 public:
 
     /**
@@ -39,6 +41,7 @@ public:
     * @return float representation of value
     */
     int parse_value(std::string value) override;
+
 
     int load_from_file(std::string path) {
         auto return_value = FCModel_BaseClass::load_from_file(path);

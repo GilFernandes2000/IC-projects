@@ -9,17 +9,14 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 include_directories(${CMAKE_SOURCE_DIR}/test)
 
-#libs:
-# cereal 1.3.0
+#external ibs:
 include_directories(${CMAKE_SOURCE_DIR}/lib)
 include_directories(${CMAKE_SOURCE_DIR}/../lib)
-
-
 
 #OpenCV
 #find_package( OpenCV REQUIRED )
 #include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # fcm.exe
-set(FCModel src/fmc/FCModel_BaseClass.h src/fmc/FCModelContext.h  src/fmc/FCModel.h src/fmc/FCModelFactory.h src/fmc/FCModelFactory.cpp )
-add_executable(fcm src/fmc/fcm.cpp ${FCModel} src/utils/math_utils.h)
+set(FCMODEL_FILES src/fmc/FCModel_BaseClass.h src/fmc/FCModelContext.h  src/fmc/FCModel.h src/fmc/FCModelFactory.h src/fmc/FCModelFactory.cpp )
+add_executable(fcm src/fmc/fcm.cpp ${FCMODEL_FILES} src/utils/math_utils.h)
