@@ -49,11 +49,36 @@ public:
      */
     FCModel_BaseClass():FCModel_BaseClass("", 1, 0){};
 
+
+
     /**
-     *
-     * @param file_path
+     * Creates a empty model.
+     * @param lang
+     * @param order
+     * @param smoothing
      */
-    FCModel_BaseClass(std::string file_path){
+    FCModel_BaseClass(std::string lang, int order=1, int smoothing=0){
+            this->lang=lang;
+            this->order=order;
+            this->smoothing=smoothing;
+    };
+
+    /**
+     * Creates a filled model
+     * @param model
+     * @param lang
+     * @param order
+     * @param smoothing
+     */
+    FCModel_BaseClass(MODEL<T> model, std::string lang, int order=1, int smoothing=0): FCModel_BaseClass(lang, order, smoothing){
+        this->model=model;
+    };
+
+    /**
+     * Load a model from a file
+     * @param file_path path to the file
+     */
+    virtual int load_from_file(std::string file_path){
         std::ifstream ifs(file_path);
         std::string tmp;
         //load metadata
@@ -88,29 +113,7 @@ public:
         }
 
         this->model = model;
-    };
-
-    /**
-     * Creates a empty model.
-     * @param lang
-     * @param order
-     * @param smoothing
-     */
-    FCModel_BaseClass(std::string lang, int order, int smoothing=0){
-            this->lang=lang;
-            this->order=order;
-            this->smoothing=smoothing;
-    };
-
-    /**
-     * Creates a filled model
-     * @param model
-     * @param lang
-     * @param order
-     * @param smoothing
-     */
-    FCModel_BaseClass(MODEL<T> model, std::string lang, int order=1, int smoothing=0): FCModel_BaseClass(lang, order, smoothing){
-        this->model=model;
+        return 0;
     };
 
     /**
@@ -132,6 +135,7 @@ public:
                 ofs << row_ptr.first << ':' << cell_ptr.first << ':' << cell_ptr.second << '\n';
             }
         }
+        ofs.close();
 
         return 0;
     }
