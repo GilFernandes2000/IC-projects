@@ -85,5 +85,5 @@ FCModel FCModelFactory::createModel() {
 
 int FCModelFactory::saveModel(std::string file_out_path) {
     FCModel m = this->createModel();
-    return 0;//m.save_to_file(file_out_path);
+    return m.save_to_file(file_out_path);
 }

@@ -21,4 +21,5 @@ include_directories(${CMAKE_SOURCE_DIR}/../lib)
 #include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # fcm.exe
-add_executable(fcm src/fmc/fcm.cpp src/utils/math_utils.h src/fmc/FCModel.h src/fmc/FCModelFactory.cpp src/fmc/FCModelFactory.h src/fmc/FCModelContext.h src/fmc/FCModel.cpp src/fmc/FCModel_BaseClass.cpp src/fmc/FCModel_BaseClass.h src/utils/serialization.h)
+set(FCModel src/fmc/FCModel_BaseClass.h src/fmc/FCModelContext.h  src/fmc/FCModel.h src/fmc/FCModelFactory.h src/fmc/FCModelFactory.cpp )
+add_executable(fcm src/fmc/fcm.cpp ${FCModel} src/utils/math_utils.h)

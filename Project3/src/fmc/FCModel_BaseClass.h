@@ -41,23 +41,53 @@ protected:
     int order;
     int smoothing;
 
-    T parse_value(std::string value){return 0;};
-
-    /**
-     *
-     * @param file_path
-     * @return
-     */
-    int load_from_file(std::string file_path);
+    virtual T parse_value(std::string value){return 0;};
 
 public:
     /**
      * Default Constructor
      */
-    FCModel_BaseClass(){
-        this->order=1;
-        this->smoothing=0;
-        this->lang="";
+    FCModel_BaseClass():FCModel_BaseClass("", 1, 0){};
+
+    /**
+     *
+     * @param file_path
+     */
+    FCModel_BaseClass(std::string file_path){
+        std::ifstream ifs(file_path);
+        std::string tmp;
+        //load metadata
+
+        getline(ifs, this->lang);
+
+        getline(ifs, tmp);
+        this->order = stoi(tmp);
+        getline(ifs, tmp);
+        this->smoothing = stoi(tmp);
+
+        MODEL<T> model;
+
+        std::string line;
+        std::vector<std::string> line_c;
+        while(getline(ifs, line)){
+            std::stringstream ss(line);
+            while(getline(ss, tmp, ':')){
+                line_c.push_back(tmp);
+                if(line_c.size()==3) {
+                    break;
+                }
+            }
+
+            std::string ctx = line_c[0];
+            std::string letter = line_c[1];
+            int count = parse_value(line_c[2]);
+
+            model[ctx][letter] = count;
+
+            line_c.clear();
+        }
+
+        this->model = model;
     };
 
     /**
@@ -88,7 +118,23 @@ public:
      * @param file_out_path file to save the counter's state to
      * @return
      */
-    int save_to_file(std::string file_out_path);
+    int save_to_file(std::string file_out_path){
+        std::ofstream ofs(file_out_path);
+
+        //save metadata
+        ofs << this->lang << '\n';
+        ofs << this->order << '\n';
+        ofs << this->smoothing << '\n';
+
+
+        for (auto const& row_ptr : this->model){
+            for (auto const& cell_ptr : row_ptr.second){
+                ofs << row_ptr.first << ':' << cell_ptr.first << ':' << cell_ptr.second << '\n';
+            }
+        }
+
+        return 0;
+    }
 
     /**
      * Set the probility of of the model for a given (context/row, current/collum)
@@ -96,7 +142,9 @@ public:
      * @param collumn current item
      * @param probility the probability
      */
-    void set_field(std::string row, std::string collumn, T value);
+    void set_field(std::string row, std::string collumn, T value){
+        this->model[row][collumn] =value;
+    };
 
 };
 

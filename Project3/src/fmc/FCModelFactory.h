@@ -30,15 +30,13 @@ public:
 
     FCModelFactory(std::string lang, int order, int smoothing): FCModel_BaseClass<int>(lang, order, smoothing), context(order) {}
     FCModelFactory(MODEL<int> model, std::string lang, int order, int smoothing): FCModel_BaseClass<int>(model, lang, order, smoothing), context(order) {}
-    FCModelFactory(std::string path): FCModel_BaseClass<int>(), context(this->order) {
-        this->load_from_file(path);
-    }
+    FCModelFactory(std::string path): FCModel_BaseClass<int>(path), context(this->order) {}
 
     /**Virtual method implementation
     * @param value
     * @return float representation of value
     */
-    int parse_value(std::string value);
+    int parse_value(std::string value) override;
 
     /**
      * Adds char to model
