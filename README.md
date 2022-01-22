@@ -22,6 +22,7 @@ Iremos colocar aqui todos os nossos projetos de IC
     - [OpenCV](#opencv-1)
   - [Argumentos](#argumentos)
   - [Documentação](#documentação)
+- [Projeto 3](#projeto-3)
 
 # Projeto 1
 Primeiro projeto onde manipulamos texto, audio e imagens \
@@ -170,3 +171,37 @@ Para gerar a documentação:
 cd Project2
 Doxyfile
 ````
+# Projeto 3
+[**Relatorio**](#)
+
+## Executaveis
+Foram desenvolvidos N executaveis:
+### FCM
+ ````
+  fcm <language> <context_order> <smoothing_parameter>
+ ````
+ Permite o treino de modelos de contexto finito para ficheiros de texto.
+ 
+ De forma a gerar um modelo (de probabilidades) é usado um contador das diversas ocorrencias (contexto, carater), no entanto, ambas usam a mesma estrutura genérica internamente:
+ ````
+  using MODEL = std::map<std::string, std::map<std::string , T>>;
+ ````
+ com um datapath:
+ ````
+  Ficheiro de Texto ---> Contador (ocurrencias) [FCModelFactory.h] ---> Modelo (probabilidades) [FCModel.h]
+ ````
+ 
+ O executavel tem de ser executado com os parametros acima mencionados pois são necessarios para criar um contador inicial, no entato o programa permite fazer o _load_ de um ficheiro com um contador já pre-preeenchido para continuar o treino no entanto este substituirá o contador inicial. 
+ 
+ O programa aresenta ainda um menu interno que permite operações sobre contadores/modelos:
+ - ler um ficheiro de texto para atualizar os contadores
+ - guardar o estado atual dos contadores;
+ - fazer o  _load_ do estado dos contadores aprtir de um ficheiro
+ - criar um modelo de probabilidadeds e guarda-lo num ficheiro (apresenta a entropia do modelo);
+ - _load_ de um modelo de probabilidades e calcular a entropia.
+  
+ #### Parametros
+ - language: a lingua dos ficheiros de texto que serão usados para treinar o modelo, serve apenas como _label_ e portanto é deixado a descriçao do utilzador a correção entre o parametro e os ficheiros efetivamente usados.
+ - context_order: número de caracteres que serão usados para contexto.
+ - smoothing_parameter: smoothin na fórmula de Lapalce de forma a lidar com a existencia de probabilidades nulas.
+
