@@ -16,10 +16,10 @@ int FCModelFactory::addChar(char c) {
 int FCModelFactory::addChar(std::string c) {
     // checks if buffer already has enough chars
     if ( !this->context.filled() ) {
-        return this->updateContext(c[0]);
+        return this->update_context(c);
     }
 
-    std::string context = this->context.getContext();
+    std::string context = this->context.get_context();
 
     // update counters
     this->model[context][c] += 1;
@@ -27,7 +27,7 @@ int FCModelFactory::addChar(std::string c) {
     this->total_chars++;
 
     //update context
-    return this->updateContext(c);
+    return this->update_context(c);
 }
 
 int FCModelFactory::readFile(std::string file_path) {
@@ -47,15 +47,6 @@ int FCModelFactory::readFile(std::string file_path) {
     }
 
     ifs.close();
-    return 0;
-}
-
-int FCModelFactory::updateContext(char c) {
-    std::string s(1, c);
-    return this->updateContext(s);
-}
-int FCModelFactory::updateContext(std::string s) {
-    this->context.updateContext(s);
     return 0;
 }
 

@@ -10,6 +10,7 @@
 #include "string"
 #include "sstream"
 #include "fstream"
+#include "FCModelContext.h"
 
 //------ MODEL CHARACTERISTCS ----//
 int const NR_SYMBOLS = 26; // 26 letters
@@ -36,6 +37,7 @@ template<typename T>
 class FCModel_BaseClass {
 protected:
     MODEL<T> model;
+    FCModelContext context;
 
     std::string lang;
     int order;
@@ -57,7 +59,7 @@ public:
      * @param order
      * @param smoothing
      */
-    FCModel_BaseClass(std::string lang, int order=1, int smoothing=0){
+    FCModel_BaseClass(std::string lang, int order, int smoothing): context(order){
             this->lang=lang;
             this->order=order;
             this->smoothing=smoothing;
@@ -105,7 +107,7 @@ public:
 
             std::string ctx = line_c[0];
             std::string letter = line_c[1];
-            int count = parse_value(line_c[2]);
+            T count = parse_value(line_c[2]);
 
             model[ctx][letter] = count;
 
@@ -148,6 +150,59 @@ public:
      */
     void set_field(std::string row, std::string collumn, T value){
         this->model[row][collumn] =value;
+    };
+
+    /**
+     * Updates internal context buffer.
+     * @param c char to be inserted in the buffer
+     * @return 0 if success
+     */
+    int update_context(std::string c){
+        this->context.update_context(c);
+        return 0;
+    };
+
+
+    /**
+     *
+     * @return the current context
+     */
+    std::string get_context() {
+        return this->context.get_context();
+    }
+
+    /**
+     * TODO
+     * return the probability associated with a given pair (context, char)
+     * @return the probability associated with a given pair (context, char)
+     */
+    T get_value(std::string context, std::string c) {
+        auto res = model[context][c];
+        // no value associated with the pair (context, char)
+        if (res==0.0){
+            res = -1;
+        }
+        return res;
+    };
+    T get_value(std::string c) {
+        return this->get_value(this->get_context(), c);
+    };
+
+    /**
+     * return the probability associated with a given pair (context, char) and updates internal context
+     * @param c
+     * @return
+     */
+    T get_value_update(std::string c) {
+        //check if context has been loaded, if not just updates contexts
+        if(!this->context.filled()){
+            this->context.update_context(c);
+            return -1;
+        }
+
+        auto ctx = this->get_context();
+        this->context.update_context(c);
+        return this->get_value(ctx, c);
     };
 
 };

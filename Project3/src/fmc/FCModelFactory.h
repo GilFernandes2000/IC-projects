@@ -21,7 +21,6 @@
 #include "utils/math_utils.h"
 
 class FCModelFactory: public FCModel_BaseClass<int>{
-    FCModelContext context;
     int total_chars = 0;
 
 public:
@@ -30,9 +29,9 @@ public:
      * Constructors
      */
 
-    FCModelFactory(std::string lang, int order, int smoothing): FCModel_BaseClass<int>(lang, order, smoothing), context(order) {}
-    FCModelFactory(MODEL<int> model, std::string lang, int order, int smoothing): FCModel_BaseClass<int>(model, lang, order, smoothing), context(order) {}
-    FCModelFactory(std::string file_path):FCModel_BaseClass<int>() {
+    FCModelFactory(std::string lang, int order, int smoothing): FCModel_BaseClass<int>(lang, order, smoothing) {}
+    FCModelFactory(MODEL<int> model, std::string lang, int order, int smoothing): FCModel_BaseClass<int>(model, lang, order, smoothing){}
+    FCModelFactory(const std::string file_path):FCModel_BaseClass<int>() {
         load_from_file(file_path);
     }
 
@@ -64,14 +63,6 @@ public:
      * @return
      */
     int readFile(std::string file_path);
-
-    /**
-     * Updates internal context buffer.
-     * @param c char to be inserted in the buffer
-     * @return 0 if success
-     */
-    int updateContext(char c);
-    int updateContext(std::string c);
 
     /**
      * TODO: create probabilities using the rigth formulas
