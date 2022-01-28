@@ -31,7 +31,7 @@ public:
      * Enssures that the size of the buffer is always <= that its order
      * @param c character to be introduced
      */
-    void updateContext(char c){
+    void update_context(char c){
         context.push_back(c);
 
         if(context.size() > this->order) {
@@ -39,7 +39,7 @@ public:
         }
     }
 
-    void updateContext(std::string s){
+    void update_context(std::string s){
         context.append(s);
 
         if(context.size() > this->order) {
@@ -50,7 +50,7 @@ public:
     /**
      * @return the current context
      */
-    std::string getContext(){
+    std::string get_context(){
         return context;
     }
 
