@@ -5,7 +5,9 @@
 #include "stdio.h"
 #include <string>
 #include <iostream>
-#include "filesystem"
+#include <filesystem>
+namespace fs = std::filesystem;
+
 #include "FCModelFactory.h"
 
 int main (int argc, char *argv[]) {
@@ -37,18 +39,24 @@ int main (int argc, char *argv[]) {
         std::string file_path;
         printf("Options:\n"
                " f <file_path>: process file\n"
+               " d <dir_path>: process files in a directory\n"
                " s <file_path>: save model to file\n"
                " l <file_path>: load model from file\n"
                " m <file_path>: creates and outputs the probabilites model\n"
                " e <file_path>: load probabilities model and get entropy\n"
                " x: exit\n");
         std::cin >> op;
+        if(op=='x'){return 0;}
         std::cin >> file_path;
 
         switch (op) {
-            case 'x':
-                return 0;
+            case 'd':
 
+                for (const auto & entry : fs::directory_iterator(file_path))
+                    if (!entry.is_directory()) {
+                        f.readFile(entry.path());
+                    }
+                break;
             case 'f':
                 f.readFile(file_path);
                 break;
