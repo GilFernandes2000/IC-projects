@@ -31,9 +31,9 @@ int main (int argc, char *argv[]) {
     std::string model_file = argv[1];
     std::string file = argv[2];
 
-    auto n_bits = FCModel::use_model(model_file, file);
+    auto ret_value = FCModel::use_model(model_file, file);
 
-    printf("Using model (%s) on file (%s):\nNBits: %d\n", model_file.c_str(), file.c_str(), n_bits);
+    printf("Using model (%s) on file (%s):\nNBits: %d\n", model_file.c_str(), file.c_str(), ret_value.num_bits);
 
     return 0;
 }

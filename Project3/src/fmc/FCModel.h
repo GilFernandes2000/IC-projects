@@ -9,6 +9,16 @@
 #include "FCModel_BaseClass.h"
 #include "utils/math_utils.h"
 
+struct use_model_return {
+    std::string lang;
+    int num_bits;
+
+    bool operator<(const use_model_return& a) const
+    {
+        return num_bits < a.num_bits;
+    }
+};
+
 class FCModel :public FCModel_BaseClass<float>{
 
 public:
@@ -47,7 +57,7 @@ public:
         return  entropy;
     };
 
-    static int use_model(std::string model_file_path, std::string file_path) {
+    static use_model_return use_model(std::string model_file_path, std::string file_path) {
         printf("Loading Model: %s\n", model_file_path.c_str());
         FCModel m(model_file_path);
         //m.load_from_file(model_file_path);
@@ -55,7 +65,7 @@ public:
         std::ifstream ifs(file_path);
         if (!ifs.good()) {
             printf("File Not Found!\n");
-            return -1;
+            return {"", -1};
         }
 
         int total_bits = 0;
@@ -80,10 +90,13 @@ public:
 
         ifs.close();
 
-        return total_bits;
+        struct use_model_return ret {m.lang, total_bits};
+
+        return ret;
     }
 
 };
+
 
 
 #endif //PROJECT3_FCMODEL_H
