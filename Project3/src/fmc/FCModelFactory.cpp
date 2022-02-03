@@ -88,6 +88,7 @@ FCModel FCModelFactory::createModel() {
 
     }
 
+    model.u = (0.0 +smoothing)/total_chars;
 
     return model;
 }

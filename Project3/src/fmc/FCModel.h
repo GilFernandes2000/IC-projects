@@ -40,6 +40,10 @@ public:
         return std::stof(value);
     };
 
+    /**
+     *
+     * @return
+     */
     float getEntropy() {
         float entropy = 0.0;
 
@@ -69,6 +73,7 @@ public:
         }
 
         int total_bits = 0;
+        auto def_num_bits = floor(m.getEntropy())+1;
 
         char c;
         while (ifs.get(c))
@@ -78,12 +83,13 @@ public:
                 std::string cs(1, c);
 
                 float prob = m.get_value_update(cs);
-                // default value in case there is no probability associated with the pair (context,char)
-                int num_bits = m.smoothing;
-                // if theres a value replace it
-                if(prob!=-1.0){
-                    num_bits = floor(0.0- log2(prob))+1;
+                int num_bits = def_num_bits;
+                // if there's no probability associated with the current event
+                // calculate the probability using laplace formula with n=0 and using the constant u
+                if(prob==-1.0){
+                    printf("WEll fuck!\n");
                 }
+                num_bits = floor(0.0- log2(prob))+1;
                 total_bits+=num_bits;
             }
         }

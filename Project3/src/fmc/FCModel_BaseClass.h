@@ -29,6 +29,7 @@ int const NR_SYMBOLS = 26; // 26 letters
 inline bool useChar(char c) {
     return isalpha(c);
 }
+//------ MODEL CHARACTERISTCS ----//
 
 template<typename T>
 using MODEL = std::map<std::string, std::map<std::string , T>>;
@@ -40,14 +41,16 @@ protected:
     FCModelContext context;
 
     std::string lang;
-    int order;
-    int smoothing;
+    unsigned int order;
+    unsigned int smoothing;
 
     virtual T parse_value(std::string value){return 0;};
 
 public:
+    float u=-1.0; // equal to smoothing / total_chars, used when calculating the probability of a event thats never occurred
+
     /**
-     * Default Constructor
+     * Default C�onstructor
      */
     FCModel_BaseClass():FCModel_BaseClass("", 1, 0){};
 
@@ -63,6 +66,10 @@ public:
             this->lang=lang;
             this->order=order;
             this->smoothing=smoothing;
+
+            //initiate model
+
+
     };
 
     /**
@@ -91,6 +98,8 @@ public:
         this->order = stoi(tmp);
         getline(ifs, tmp);
         this->smoothing = stoi(tmp);
+        getline(ifs, tmp);
+        this->u = std::stof(tmp);
 
         MODEL<T> model;
 
@@ -130,7 +139,7 @@ public:
         ofs << this->lang << '\n';
         ofs << this->order << '\n';
         ofs << this->smoothing << '\n';
-
+        ofs << this->u << '\n';
 
         for (auto const& row_ptr : this->model){
             for (auto const& cell_ptr : row_ptr.second){
@@ -180,7 +189,7 @@ public:
         auto res = model[context][c];
         // no value associated with the pair (context, char)
         if (res==0.0){
-            res = -1;
+            res = this->u / ( model[context]["total"] + (this->u*NR_SYMBOLS));
         }
         return res;
     };
