@@ -28,25 +28,33 @@ public:
     /**
      * Constructors
      */
-
+    /**
+     * Base constructor
+     * @param lang model language
+     * @param order context order (buffer size)
+     * @param smoothing laplace formula alpha
+     */
     FCModelFactory(std::string lang, int order, int smoothing): FCModel_BaseClass<int>(lang, order, smoothing) {}
+    /**
+     * Base constructor with a prefilled model
+     * Uses Base constructor.
+     * @param model
+     */
     FCModelFactory(MODEL<int> model, std::string lang, int order, int smoothing): FCModel_BaseClass<int>(model, lang, order, smoothing){}
+    /**
+     * Creates a model factory from a file
+     * @param file_path path for the file containing the counters.
+     */
     FCModelFactory(const std::string file_path):FCModel_BaseClass<int>() {
         load_from_file(file_path);
     }
 
-    /**Virtual method implementation
-    * @param value
+    /**
+    * Virtual method implementation
+    * @param value string representation of the value (read from file).
     * @return float representation of value
     */
     int parse_value(std::string value) override;
-
-
-    int load_from_file(std::string path) {
-        auto return_value = FCModel_BaseClass::load_from_file(path);
-        context = FCModelContext(this->order);
-        return return_value;
-    }
 
 
     /**

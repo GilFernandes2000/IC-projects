@@ -9,6 +9,9 @@
 #include "FCModel_BaseClass.h"
 #include "utils/math_utils.h"
 
+/**
+ *
+ */
 struct use_model_return {
     std::string lang;
     int num_bits;
@@ -27,13 +30,19 @@ public:
      */
     using FCModel_BaseClass::FCModel_BaseClass;
 
+    /**
+     * Allow the construction of model from a file.
+     * @param file_path path to the file containing the model.
+     */
     FCModel(const std::string file_path):FCModel_BaseClass<float>() {
         load_from_file(file_path);
         this->context.order=this->order;
     }
 
     /**
-     * @param value
+     * Base class virtual method override.
+     * Parses a string representation of a probability, read from a file, into a float representation.
+     * @param value string probability.
      * @return float representation of value
      */
     float parse_value(std::string value) override {
@@ -41,8 +50,8 @@ public:
     };
 
     /**
-     *
-     * @return
+     * Calculates the entropy of the model.
+     * @return model's entropy.
      */
     float getEntropy() {
         float entropy = 0.0;
@@ -61,6 +70,12 @@ public:
         return  entropy;
     };
 
+    /**
+     * Allows the usage of a model on a file. Calculates the number of bits needed to represent a text file using a model.
+     * @param model_file_path path to the model file.
+     * @param file_path path to the file to be analysed.
+     * @return <struct use_model_return> containg the language of the model used and the number of bits.
+     */
     static use_model_return use_model(std::string model_file_path, std::string file_path) {
         printf("Loading Model: %s\n", model_file_path.c_str());
         FCModel m(model_file_path);

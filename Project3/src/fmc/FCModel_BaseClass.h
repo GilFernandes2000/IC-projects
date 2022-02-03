@@ -16,13 +16,14 @@
 int const NR_SYMBOLS = 26; // 26 letters
 /**
  * Transforms a char into an appropriate alternative supported by the counters and the model
- * @param c
+ * @param c char to be transformed
  * @return return the lowercase of char
  */
  inline char transform_char(char c) {
     return tolower(c);
 }
 /**
+ * Determined if a char can be used in a model
  * @param c
  * @return if char can be used in model
  */
@@ -44,33 +45,33 @@ protected:
     unsigned int order;
     unsigned int smoothing;
 
+    /**
+     * Parses the numeric value in the text file.
+     * @param value
+     * @return the numeric value
+     */
     virtual T parse_value(std::string value){return 0;};
 
 public:
     float u=-1.0; // equal to smoothing / total_chars, used when calculating the probability of a event thats never occurred
 
     /**
-     * Default C�onstructor
-     */
-    FCModel_BaseClass():FCModel_BaseClass("", 1, 0){};
-
-
-
-    /**
+     * Base Constructor
      * Creates a empty model.
      * @param lang
      * @param order
      * @param smoothing
      */
     FCModel_BaseClass(std::string lang, int order, int smoothing): context(order){
-            this->lang=lang;
-            this->order=order;
-            this->smoothing=smoothing;
-
-            //initiate model
-
-
+        this->lang=lang;
+        this->order=order;
+        this->smoothing=smoothing;
     };
+
+    /**
+     * Default Constructor
+     */
+    FCModel_BaseClass():FCModel_BaseClass("", 1, 0){};
 
     /**
      * Creates a filled model
@@ -87,7 +88,7 @@ public:
      * Load a model from a file
      * @param file_path path to the file
      */
-    virtual int load_from_file(std::string file_path){
+    int load_from_file(std::string file_path){
         std::ifstream ifs(file_path);
         std::string tmp;
         //load metadata
@@ -128,9 +129,9 @@ public:
     };
 
     /**
-     * Saves counters state to file
+     * Saves model state to file
      * @param file_out_path file to save the counter's state to
-     * @return
+     * @return 0 if success
      */
     int save_to_file(std::string file_out_path){
         std::ofstream ofs(file_out_path);
@@ -152,7 +153,7 @@ public:
     }
 
     /**
-     * Set the probility of of the model for a given (context/row, current/collum)
+     * Set the value of the model for a given (context/row, char/collum)
      * @param row the context
      * @param collumn current item
      * @param probility the probability
@@ -173,7 +174,7 @@ public:
 
 
     /**
-     *
+     * Context getter.
      * @return the current context
      */
     std::string get_context() {
@@ -181,8 +182,7 @@ public:
     }
 
     /**
-     * TODO
-     * return the probability associated with a given pair (context, char)
+     * Model value getter.
      * @return the probability associated with a given pair (context, char)
      */
     T get_value(std::string context, std::string c) {
@@ -198,9 +198,9 @@ public:
     };
 
     /**
-     * return the probability associated with a given pair (context, char) and updates internal context
+     * model value getter with automatic context updating.
      * @param c
-     * @return
+     * @return return the probability associated with a given pair (context, char) and updates internal context
      */
     T get_value_update(std::string c) {
         //check if context has been loaded, if not just updates contexts

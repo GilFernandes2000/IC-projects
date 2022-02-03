@@ -20,7 +20,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../lib)
 set(FCMODEL_FILES src/fmc/FCModel_BaseClass.h src/fmc/FCModelContext.h  src/fmc/FCModel.h src/fmc/FCModelFactory.h src/fmc/FCModelFactory.cpp )
 
 # fcm.exe
-add_executable( fcm src/fmc/fcm.cpp ${FCMODEL_FILES} src/utils/math_utils.h)
+add_executable( fcm src/fcm.cpp ${FCMODEL_FILES} src/utils/math_utils.h)
 
 # lang.exe
 add_executable( lang src/lang.cpp ${FCMODEL_FILES} )

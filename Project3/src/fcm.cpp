@@ -8,8 +8,14 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-#include "FCModelFactory.h"
+#include "fmc/FCModelFactory.h"
 
+/**
+ * fcm executable.
+ * allows the training of model.
+ * Usage:
+ *      fcm <language> <model_order> <smoothing>
+ */
 int main (int argc, char *argv[]) {
 
     if (argc !=4) {
@@ -40,8 +46,8 @@ int main (int argc, char *argv[]) {
         printf("Options:\n"
                " f <file_path>: process file\n"
                " d <dir_path>: process files in a directory\n"
-               " s <file_path>: save model to file\n"
-               " l <file_path>: load model from file\n"
+               " s <file_path>: save counters to file\n"
+               " l <file_path>: load counters from file\n"
                " m <file_path>: creates and outputs the probabilites model\n"
                " e <file_path>: load probabilities model and get entropy\n"
                " x: exit\n");

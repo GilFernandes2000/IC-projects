@@ -9,6 +9,13 @@
 
 namespace fs = std::filesystem;
 
+/**
+ * finlang executable.
+ * given a directory with various models representing language and a text file
+ * returns which language model better represents the text file.
+ * Usage:
+ *      findlang <model_dir> <text_file>
+ */
 int main (int argc, char *argv[]) {
 
     std::string exe_cmd = "findlang <model_dir> <text_file>\n";

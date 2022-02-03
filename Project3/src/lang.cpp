@@ -8,12 +8,13 @@
 
 #include "fmc/FCModel.h"
 
-float get_value(FCModel m, std::string c ) {
-    auto ctx = m.get_context();
-    m.update_context(c);
-    return m.get_value(ctx, c);
-}
-
+/**
+ * lang executable.
+ * given a path for a model representative of a language and a text file
+ * returns the number of bits necessary to represent that text file in the model's language.
+ * Usage:
+ *      lang <model_path> <text_file>
+ */
 int main (int argc, char *argv[]) {
 
     std::string exe_cmd = "lang <language_model> <text_file>\n";
