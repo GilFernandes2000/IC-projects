@@ -9,6 +9,9 @@
 
 namespace fs = std::filesystem;
 
+#include <chrono>
+using namespace std::chrono;
+
 /**
  * finlang executable.
  * given a directory with various models representing language and a text file
@@ -36,6 +39,7 @@ int main (int argc, char *argv[]) {
     FCModel m;
 
     std::vector<use_model_return> values;
+    auto start = high_resolution_clock::now();
 
     for (const auto & entry : fs::directory_iterator(model_dir)) {
         if (!entry.is_directory()) {
@@ -45,6 +49,10 @@ int main (int argc, char *argv[]) {
             printf("Using model (%s) on file (%s):\nLang: %s; NBits: %d\n", model_dir.c_str(), file_path.c_str(), ret_value.lang.c_str(), ret_value.num_bits);
         }
     }
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    printf("Full Duration: %d\n", duration.count());
+
 
     // sort results as to get the language with the least num of bits
 
