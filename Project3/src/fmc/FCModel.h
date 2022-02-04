@@ -106,7 +106,6 @@ public:
                 }
                 num_bits = floor(0.0-log2(prob))+1;
                 total_bits+=num_bits;
-            }
         }
 
         ifs.close();
