@@ -102,10 +102,11 @@ public:
                 // if there's no probability associated with the current event
                 // calculate the probability using laplace formula with n=0 and using the constant u
                 if(prob==-1.0){
-                    printf("Wrong Prob!\n");
+                    printf("WEll fuck!\n");
                 }
-                num_bits = floor(0.0-log2(prob))+1;
+                num_bits = floor(0.0- log2(prob))+1;
                 total_bits+=num_bits;
+            }
         }
 
         ifs.close();
